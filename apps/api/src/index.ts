@@ -1,13 +1,33 @@
-import "reflect-metadata";
-import { buildSchema } from "type-graphql";
+import { PrismaClient } from "@prisma/client";
 import { ApolloServer } from "apollo-server";
 import path from "path";
-import { PrismaClient } from "@prisma/client";
-import { resolvers } from ".prisma/type-graphql";
+import "reflect-metadata";
+import { buildSchema, UseMiddleware } from "type-graphql";
+import { applyResolversEnhanceMap, resolvers, ResolversEnhanceMap } from ".prisma/type-graphql";
+import { createFindManyMiddleware } from "./middlewares/find-many";
+import { LogAccessMiddleware } from "./middlewares/log-access";
 
-interface Context {
+export interface Context {
   prisma: PrismaClient;
+  userEmail?: string;
 }
+
+const resolversEnhanceMap: ResolversEnhanceMap = {
+  User: {
+    _all: [UseMiddleware(LogAccessMiddleware)],
+    aggregateUser: [UseMiddleware(createFindManyMiddleware("User"))],
+    deleteManyUser: [UseMiddleware(createFindManyMiddleware("User"))],
+    findFirstUser: [UseMiddleware(createFindManyMiddleware("User"))],
+    users: [UseMiddleware(createFindManyMiddleware("User"))],
+    groupByUser: [UseMiddleware(createFindManyMiddleware("User"))],
+    updateManyUser: [UseMiddleware(createFindManyMiddleware("User"))],
+  },
+  Location: {
+    createLocation: [UseMiddleware(LogAccessMiddleware)],
+  },
+};
+
+applyResolversEnhanceMap(resolversEnhanceMap);
 
 async function main() {
   const schema = await buildSchema({
@@ -21,8 +41,12 @@ async function main() {
 
   const server = new ApolloServer({
     schema,
-    context: (): Context => ({ prisma }),
+    context: ({ req }): Context => {
+      const userEmail = req.headers.authorization;
+      return { prisma, userEmail };
+    },
   });
+
   const { port } = await server.listen(4000);
   console.log(`GraphQL is listening on ${port}!`);
 }
