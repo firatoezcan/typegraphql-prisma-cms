@@ -6,6 +6,7 @@ import {
   Interest,
   Language,
   Location,
+  Prisma,
   Profile,
   Project,
   Publication,
@@ -43,22 +44,23 @@ const AppAbility = PrismaAbility as AbilityClass<AppAbility>;
 const { can, cannot, build } = new AbilityBuilder(AppAbility);
 
 export const createUserAbility = (context: Context) => {
-  const userOneRelationAway = { user: { email: { equals: context.userEmail } } };
+  const userPermission: Prisma.UserWhereInput = { email: { equals: context.userEmail } };
 
-  can("read", "User", userOneRelationAway.user);
-  can("read", "Location", userOneRelationAway);
-  can("read", "Profile", userOneRelationAway);
-  can("read", "Work", userOneRelationAway);
-  can("read", "Volunteer", userOneRelationAway);
-  can("read", "Education", userOneRelationAway);
-  can("read", "Award", userOneRelationAway);
-  can("read", "Publication", userOneRelationAway);
-  can("read", "Skill", userOneRelationAway);
-  can("read", "Language", userOneRelationAway);
-  can("read", "Interest", userOneRelationAway);
-  can("read", "Reference", userOneRelationAway);
-  can("read", "Project", userOneRelationAway);
-  can("read", "Award", userOneRelationAway);
+  // Todo: Generate this in a smart way depending on the location of the models
+  can("read", "User", userPermission);
+  can("read", "Location", { user: userPermission });
+  can("read", "Profile", { user: userPermission });
+  can("read", "Work", { user: userPermission });
+  can("read", "Volunteer", { user: userPermission });
+  can("read", "Education", { user: userPermission });
+  can("read", "Award", { user: userPermission });
+  can("read", "Publication", { user: userPermission });
+  can("read", "Skill", { user: userPermission });
+  can("read", "Language", { user: userPermission });
+  can("read", "Interest", { user: userPermission });
+  can("read", "Reference", { user: userPermission });
+  can("read", "Project", { user: userPermission });
+  can("read", "Award", { user: userPermission });
 
   return build();
 };
