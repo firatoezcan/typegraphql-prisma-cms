@@ -26,7 +26,7 @@ Copy the `.env.example` in `apps/api` and rename it to `.env`
 yarn api wipe
 
 yarn api upd
-yarn api prisma migrate
+yarn api prisma migrate reset
 yarn api prisma generate
 yarn api dev
 ```
