@@ -1,0 +1,49 @@
+{
+  "name": "api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "jest --detectOpenHandles",
+    "dev": "nodemon --exec \"node -r dotenv/config -r esbuild-register --inspect ./src/index.ts\" -e .ts",
+    "prisma": "node -r dotenv/config $(yarn bin prisma)",
+    "upd": "docker-compose up -d",
+    "stop": "docker-compose stop",
+    "restart": "docker-compose restart",
+    "down": "docker-compose down",
+    "delete-volume": "docker volume rm api_db_data || true",
+    "wipe": "yarn down && yarn delete-volume",
+    "start": "node -r dotenv/config -r esbuild-register ./dist/index.js",
+    "build": "tsc",
+    "codelint": "TIMING=1 eslint src --fix --cache",
+    "tslint": "tsc --noEmit --incremental",
+    "lint": "yarn codelint && yarn tslint"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.23",
+    "esbuild-register": "^2.5.0",
+    "nodemon": "^2.0.15",
+    "prisma": "^3.12.0",
+    "scripts": "*",
+    "ts-node": "^10.7.0",
+    "tsconfig": "*"
+  },
+  "jest": {
+    "preset": "scripts/jest/node"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.12.0",
+    "@types/graphql-fields": "^1.3.4",
+    "apollo-server": "^3.6.7",
+    "class-validator": "^0.13.2",
+    "graphql": "^15.3.0",
+    "graphql-fields": "^2.0.3",
+    "graphql-scalars": "^1.17.0",
+    "reflect-metadata": "^0.1.13",
+    "tslib": "^2.3.1",
+    "type-graphql": "^1.1.1",
+    "typegraphql-prisma": "^0.20.0"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma"
+  }
+}

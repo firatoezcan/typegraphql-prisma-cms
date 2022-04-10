@@ -1,0 +1,23 @@
+import React, { useState } from "react";
+
+export const CounterButton = () => {
+  const [count, setCount] = useState(0);
+  return (
+    <div
+      style={{
+        background: `rgba(255,255,255,.05)`,
+        borderRadius: `8px`,
+        padding: 16,
+      }}
+    >
+      <p>
+        This is component is from <code>ui xd xd xdxd</code>
+      </p>
+      <p>
+        <button type="button" onClick={() => setCount((c) => c + 2)}>
+          count {count}
+        </button>
+      </p>
+    </div>
+  );
+};

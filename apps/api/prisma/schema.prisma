@@ -1,0 +1,224 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator typegraphql {
+  provider = "typegraphql-prisma"
+  output   = "../node_modules/.prisma/type-graphql"
+}
+
+model User {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id Int @id @default(autoincrement())
+
+  firstName String @map("first_name")
+  lastName  String @map("last_name")
+  email     String @unique
+  label     String
+  image     String
+  phone     String
+  summary   String
+
+  location     Location?
+  profiles     Profile[]
+  work         Work[]
+  volunteer    Volunteer[]
+  education    Education[]
+  awards       Award[]
+  publications Publication[]
+  skills       Skill[]
+  languages    Language[]
+  interests    Interest[]
+  references   Reference[]
+  projects     Project[]
+
+  @@map("user")
+}
+
+model Location {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id Int @id @default(autoincrement())
+
+  address     String
+  postalCode  String @map("postal_code")
+  city        String
+  countryCode String @map("country_code")
+  region      String
+
+  userId Int   @unique @map("user_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+
+  @@map("location")
+}
+
+model Profile {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id Int @id @default(autoincrement())
+
+  network  String
+  username String
+  url      String
+
+  userId Int   @map("user_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+
+  @@map("profile")
+}
+
+model Work {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id         Int      @id @default(autoincrement())
+  name       String
+  position   String
+  summary    String
+  url        String
+  startDate  DateTime @map("start_date") @db.Timestamptz
+  endDate    DateTime @map("end_date") @db.Timestamptz
+  highlights String[]
+
+  userId Int   @map("user_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("work")
+}
+
+model Volunteer {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id           Int      @id @default(autoincrement())
+  organization String
+  position     String
+  summary      String
+  url          String
+  startDate    DateTime @map("start_date") @db.Timestamptz
+  endDate      DateTime @map("end_date") @db.Timestamptz
+  highlights   String[]
+
+  userId Int   @map("user_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("volunteer")
+}
+
+model Education {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id          Int      @id @default(autoincrement())
+  institution String
+  area        String
+  studyType   String   @map("study_type")
+  url         String
+  startDate   DateTime @map("start_date") @db.Timestamptz
+  endDate     DateTime @map("end_date") @db.Timestamptz
+  score       String
+  courses     String[]
+
+  userId Int   @map("user_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("education")
+}
+
+model Award {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id      Int      @id @default(autoincrement())
+  title   String
+  date    DateTime @db.Timestamptz
+  awarder String
+  summary String
+
+  userId Int   @map("user_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("awards")
+}
+
+model Publication {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id          Int      @id @default(autoincrement())
+  name        String
+  publisher   String
+  url         String
+  releaseDate DateTime @map("release_date") @db.Timestamptz
+  summary     String
+
+  userId Int   @map("user_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("publication")
+}
+
+model Skill {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id       Int    @id @default(autoincrement())
+  category String
+  level    String
+
+  keywords String[]
+
+  userId Int   @map("user_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("skill")
+}
+
+model Language {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id      Int    @id @default(autoincrement())
+  name    String
+  fluency String
+
+  userId Int   @map("user_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("language")
+}
+
+model Interest {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id       Int      @id @default(autoincrement())
+  name     String
+  keywords String[]
+
+  userId Int   @map("user_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("interest")
+}
+
+model Reference {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id        Int    @id @default(autoincrement())
+  name      String
+  reference String
+
+  userId Int   @map("user_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("reference")
+}
+
+model Project {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  highlights  String[]
+  keywords    String[]
+  startDate   DateTime @map("start_date") @db.Timestamptz
+  endDate     DateTime @map("end_date") @db.Timestamptz
+  url         String
+  roles       String[]
+  entity      String
+  type        String
+
+  userId Int   @map("user_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("project")
+}
