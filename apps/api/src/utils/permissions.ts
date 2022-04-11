@@ -41,9 +41,9 @@ type AppAbility = PrismaAbility<
 >;
 
 const AppAbility = PrismaAbility as AbilityClass<AppAbility>;
-const { can, cannot, build } = new AbilityBuilder(AppAbility);
 
 export const createUserAbility = (context: Context) => {
+  const { can, cannot, build } = new AbilityBuilder(AppAbility);
   const userPermission: Prisma.UserWhereInput = { email: { equals: context.userEmail } };
 
   // Todo: Generate this in a smart way depending on the location of the models
