@@ -3,7 +3,13 @@ import { ApolloServer } from "apollo-server";
 import path from "path";
 import "reflect-metadata";
 import { buildSchema, UseMiddleware } from "type-graphql";
-import { applyResolversEnhanceMap, resolvers, ResolversEnhanceMap, ResolverActionsConfig } from ".prisma/type-graphql";
+import {
+  applyResolversEnhanceMap,
+  resolvers,
+  ResolversEnhanceMap,
+  ResolverActionsConfig,
+  RelationResolversEnhanceMap,
+} from ".prisma/type-graphql";
 import { createFindManyMiddleware } from "./middlewares/find-many";
 import { LogAccessMiddleware } from "./middlewares/log-access";
 
@@ -30,6 +36,28 @@ for (const model of Object.values(Prisma.ModelName)) {
     ...createManyReadMiddlewares(model),
   };
 }
+
+// Todo: Use this to generate below relationResolverEnhanceMap
+console.log(Prisma.dmmf);
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const relationResolversEnhanceMap: RelationResolversEnhanceMap = {
+  User: {
+    // This doesnt actually work because its a one-to-one relationship
+    // location: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Location"))],
+    profiles: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Profile"))],
+    work: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Work"))],
+    volunteer: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Volunteer"))],
+    education: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Education"))],
+    awards: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Award"))],
+    publications: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Publication"))],
+    skills: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Skill"))],
+    languages: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Language"))],
+    interests: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Interest"))],
+    references: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Reference"))],
+    projects: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Project"))],
+  },
+};
 
 applyResolversEnhanceMap(resolversEnhanceMap);
 
