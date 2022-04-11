@@ -4,7 +4,8 @@ import { Context } from "..";
 
 @Service()
 export class LogAccessMiddleware implements MiddlewareInterface<Context> {
-  async use({ context, info }: ResolverData<Context>, next: NextFn) {
+  async use(resolverData: ResolverData<Context>, next: NextFn) {
+    const { context, info } = resolverData;
     console.log(`Logging access: ${context.userEmail} -> ${info.parentType.name}.${info.fieldName}`);
     return next();
   }
