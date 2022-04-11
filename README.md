@@ -84,7 +84,7 @@ mutation CreateUser {
 and fetch the created data with the following query and the `authorization` header being set to `firat.oezcan@gmail.com` (or whatever email you used):
 
 ```graphql
-query GetFirat {
+query GetUser {
   user(where: { email: "firat.oezcan@gmail.com" }) {
     id
     firstName
