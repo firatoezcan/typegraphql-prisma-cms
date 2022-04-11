@@ -9,7 +9,7 @@ export const createFindManyMiddleware = (model: Prisma.ModelName) => {
     const { context, args } = resolverData;
 
     console.time(`Running findMany middleware for model "${model}" took: `);
-    const userAbility = createUserAbility(context);
+    const userAbility = await createUserAbility(context);
     const userWhere = accessibleBy(userAbility)[model];
 
     resolverData.args.where = args.where

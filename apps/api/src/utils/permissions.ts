@@ -42,25 +42,51 @@ type AppAbility = PrismaAbility<
 
 const AppAbility = PrismaAbility as AbilityClass<AppAbility>;
 
-export const createUserAbility = (context: Context) => {
+export const createUserAbility = async (context: Context) => {
   const { can, cannot, build } = new AbilityBuilder(AppAbility);
-  const userPermission: Prisma.UserWhereInput = { email: { equals: context.userEmail } };
+
+  const { userEmail, prisma } = context;
+  if (!userEmail) {
+    return build();
+  }
+
+  const userPermission: Prisma.UserWhereInput = { email: { equals: userEmail } };
 
   // Todo: Generate this in a smart way depending on the location of the models
   can("read", "User", userPermission);
-  can("read", "Location", { user: userPermission });
-  can("read", "Profile", { user: userPermission });
-  can("read", "Work", { user: userPermission });
-  can("read", "Volunteer", { user: userPermission });
-  can("read", "Education", { user: userPermission });
-  can("read", "Award", { user: userPermission });
-  can("read", "Publication", { user: userPermission });
-  can("read", "Skill", { user: userPermission });
-  can("read", "Language", { user: userPermission });
-  can("read", "Interest", { user: userPermission });
-  can("read", "Reference", { user: userPermission });
-  can("read", "Project", { user: userPermission });
-  can("read", "Award", { user: userPermission });
+
+  const user = await prisma.user.findUnique({ where: { email: userEmail }, select: { id: true } });
+  if (!user) {
+    throw new Error(`Couldn't find user with email "${userEmail}"`);
+  }
+  can("read", "Location", { userId: { equals: user.id } });
+  can("read", "Profile", { userId: { equals: user.id } });
+  can("read", "Work", { userId: { equals: user.id } });
+  can("read", "Volunteer", { userId: { equals: user.id } });
+  can("read", "Education", { userId: { equals: user.id } });
+  can("read", "Award", { userId: { equals: user.id } });
+  can("read", "Publication", { userId: { equals: user.id } });
+  can("read", "Skill", { userId: { equals: user.id } });
+  can("read", "Language", { userId: { equals: user.id } });
+  can("read", "Interest", { userId: { equals: user.id } });
+  can("read", "Reference", { userId: { equals: user.id } });
+  can("read", "Project", { userId: { equals: user.id } });
+  can("read", "Award", { userId: { equals: user.id } });
+
+  // This doesnt actually work
+  // can("read", "Location", { user: userPermission });
+  // can("read", "Profile", { user: userPermission });
+  // can("read", "Work", { user: userPermission });
+  // can("read", "Volunteer", { user: userPermission });
+  // can("read", "Education", { user: userPermission });
+  // can("read", "Award", { user: userPermission });
+  // can("read", "Publication", { user: userPermission });
+  // can("read", "Skill", { user: userPermission });
+  // can("read", "Language", { user: userPermission });
+  // can("read", "Interest", { user: userPermission });
+  // can("read", "Reference", { user: userPermission });
+  // can("read", "Project", { user: userPermission });
+  // can("read", "Award", { user: userPermission });
 
   return build();
 };
