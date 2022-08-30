@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { prisma, Prisma, PrismaClient } from "@prisma/client";
 import { ApolloServer } from "apollo-server";
 import path from "path";
 import "reflect-metadata";
@@ -9,8 +9,9 @@ import {
   ResolversEnhanceMap,
   ResolverActionsConfig,
   RelationResolversEnhanceMap,
+  applyRelationResolversEnhanceMap,
 } from ".prisma/type-graphql";
-import { createFindManyMiddleware } from "./middlewares/find-many";
+import { createFindManyMiddleware, createFindSingleMiddleware } from "./middlewares/find-many";
 import { LogAccessMiddleware } from "./middlewares/log-access";
 
 export interface Context {
@@ -24,6 +25,7 @@ const createManyReadMiddlewares = <TModel extends Prisma.ModelName>(model: TMode
     [`deleteMany${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
     [`findFirst${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
     [`${model.toLowerCase()}s`]: [UseMiddleware(createFindManyMiddleware(model))],
+    [`${model.toLowerCase()}`]: [UseMiddleware(createFindSingleMiddleware(model))],
     [`groupBy${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
     [`updateMany${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
   } as unknown as ResolverActionsConfig<TModel>;
@@ -37,29 +39,22 @@ for (const model of Object.values(Prisma.ModelName)) {
   };
 }
 
-// Todo: Use this to generate below relationResolverEnhanceMap
-console.log(Prisma.dmmf);
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const relationResolversEnhanceMap: RelationResolversEnhanceMap = {
-  User: {
-    // This doesnt actually work because its a one-to-one relationship
-    // location: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Location"))],
-    profiles: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Profile"))],
-    work: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Work"))],
-    volunteer: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Volunteer"))],
-    education: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Education"))],
-    awards: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Award"))],
-    publications: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Publication"))],
-    skills: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Skill"))],
-    languages: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Language"))],
-    interests: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Interest"))],
-    references: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Reference"))],
-    projects: [UseMiddleware(LogAccessMiddleware, createFindManyMiddleware("Project"))],
-  },
-};
+const relationResolversEnhanceMap: RelationResolversEnhanceMap = {};
+for (const model of Prisma.dmmf.datamodel.models) {
+  for (const field of model.fields) {
+    if (field.kind !== "object" || field.relationName === undefined) continue;
+    if (!relationResolversEnhanceMap[model.name]) {
+      relationResolversEnhanceMap[model.name] = {};
+    }
+    const findMiddleware = field.isList ? createFindManyMiddleware : createFindSingleMiddleware;
+    relationResolversEnhanceMap[model.name][field.name] = [
+      UseMiddleware(LogAccessMiddleware, findMiddleware(field.type as Prisma.ModelName)),
+    ];
+  }
+}
 
 applyResolversEnhanceMap(resolversEnhanceMap);
+applyRelationResolversEnhanceMap(relationResolversEnhanceMap);
 
 async function main() {
   const schema = await buildSchema({
@@ -68,7 +63,8 @@ async function main() {
     validate: false,
   });
 
-  const prisma = new PrismaClient();
+  const prisma = new PrismaClient({});
+
   await prisma.$connect();
 
   const server = new ApolloServer({

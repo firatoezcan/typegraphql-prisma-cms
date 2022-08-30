@@ -21,7 +21,7 @@ import { Context } from "..";
 
 type AppAbility = PrismaAbility<
   [
-    string,
+    "read",
     Subjects<{
       User: User;
       Location: Location;
@@ -42,12 +42,18 @@ type AppAbility = PrismaAbility<
 
 const AppAbility = PrismaAbility as AbilityClass<AppAbility>;
 
+const cache: Map<string, AppAbility> = new Map();
+
 export const createUserAbility = async (context: Context) => {
   const { can, cannot, build } = new AbilityBuilder(AppAbility);
 
   const { userEmail, prisma } = context;
   if (!userEmail) {
+    // Todo: Public only
     return build();
+  }
+  if (cache.has(userEmail)) {
+    return cache.get(userEmail) as AppAbility;
   }
 
   const user = await prisma.user.findUnique({ where: { email: userEmail }, select: { email: true } });
@@ -58,7 +64,7 @@ export const createUserAbility = async (context: Context) => {
   const userPermission: Prisma.UserWhereInput = { email: { equals: userEmail } };
 
   // Todo: Generate this in a smart way depending on the location of the models
-  can("read", "User", userPermission);
+  can("read", "User");
   can("read", "Location", { user: { is: userPermission } });
   can("read", "Profile", { user: { is: userPermission } });
   can("read", "Work", { user: { is: userPermission } });
@@ -73,5 +79,7 @@ export const createUserAbility = async (context: Context) => {
   can("read", "Project", { user: { is: userPermission } });
   can("read", "Award", { user: { is: userPermission } });
 
-  return build();
+  const ability = build();
+  cache.set(userEmail, ability);
+  return ability;
 };
