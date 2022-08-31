@@ -117,3 +117,7 @@ query GetUser {
   }
 }
 ```
+
+## Todo Liste
+
+- Tables without inputs break the api (this may break joint tables)

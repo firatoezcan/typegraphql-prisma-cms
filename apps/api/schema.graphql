@@ -47,6 +47,22 @@ type AggregateLocation {
   _sum: LocationSumAggregate
 }
 
+type AggregateNestedProjectLevel1 {
+  _avg: NestedProjectLevel1AvgAggregate
+  _count: NestedProjectLevel1CountAggregate
+  _max: NestedProjectLevel1MaxAggregate
+  _min: NestedProjectLevel1MinAggregate
+  _sum: NestedProjectLevel1SumAggregate
+}
+
+type AggregateNestedProjectLevel2 {
+  _avg: NestedProjectLevel2AvgAggregate
+  _count: NestedProjectLevel2CountAggregate
+  _max: NestedProjectLevel2MaxAggregate
+  _min: NestedProjectLevel2MinAggregate
+  _sum: NestedProjectLevel2SumAggregate
+}
+
 type AggregateProfile {
   _avg: ProfileAvgAggregate
   _count: ProfileCountAggregate
@@ -1578,6 +1594,8 @@ type Mutation {
   createManyInterest(data: [InterestCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyLanguage(data: [LanguageCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyLocation(data: [LocationCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
+  createManyNestedProjectLevel1(data: [NestedProjectLevel1CreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
+  createManyNestedProjectLevel2(data: [NestedProjectLevel2CreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyProfile(data: [ProfileCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyProject(data: [ProjectCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyPublication(data: [PublicationCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
@@ -1586,6 +1604,8 @@ type Mutation {
   createManyUser(data: [UserCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyVolunteer(data: [VolunteerCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyWork(data: [WorkCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
+  createNestedProjectLevel1(data: NestedProjectLevel1CreateInput!): NestedProjectLevel1!
+  createNestedProjectLevel2(data: NestedProjectLevel2CreateInput!): NestedProjectLevel2!
   createProfile(data: ProfileCreateInput!): Profile!
   createProject(data: ProjectCreateInput!): Project!
   createPublication(data: PublicationCreateInput!): Publication!
@@ -1604,6 +1624,8 @@ type Mutation {
   deleteManyInterest(where: InterestWhereInput): AffectedRowsOutput!
   deleteManyLanguage(where: LanguageWhereInput): AffectedRowsOutput!
   deleteManyLocation(where: LocationWhereInput): AffectedRowsOutput!
+  deleteManyNestedProjectLevel1(where: NestedProjectLevel1WhereInput): AffectedRowsOutput!
+  deleteManyNestedProjectLevel2(where: NestedProjectLevel2WhereInput): AffectedRowsOutput!
   deleteManyProfile(where: ProfileWhereInput): AffectedRowsOutput!
   deleteManyProject(where: ProjectWhereInput): AffectedRowsOutput!
   deleteManyPublication(where: PublicationWhereInput): AffectedRowsOutput!
@@ -1612,6 +1634,8 @@ type Mutation {
   deleteManyUser(where: UserWhereInput): AffectedRowsOutput!
   deleteManyVolunteer(where: VolunteerWhereInput): AffectedRowsOutput!
   deleteManyWork(where: WorkWhereInput): AffectedRowsOutput!
+  deleteNestedProjectLevel1(where: NestedProjectLevel1WhereUniqueInput!): NestedProjectLevel1
+  deleteNestedProjectLevel2(where: NestedProjectLevel2WhereUniqueInput!): NestedProjectLevel2
   deleteProfile(where: ProfileWhereUniqueInput!): Profile
   deleteProject(where: ProjectWhereUniqueInput!): Project
   deletePublication(where: PublicationWhereUniqueInput!): Publication
@@ -1630,6 +1654,8 @@ type Mutation {
   updateManyInterest(data: InterestUpdateManyMutationInput!, where: InterestWhereInput): AffectedRowsOutput!
   updateManyLanguage(data: LanguageUpdateManyMutationInput!, where: LanguageWhereInput): AffectedRowsOutput!
   updateManyLocation(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): AffectedRowsOutput!
+  updateManyNestedProjectLevel1(data: NestedProjectLevel1UpdateManyMutationInput!, where: NestedProjectLevel1WhereInput): AffectedRowsOutput!
+  updateManyNestedProjectLevel2(data: NestedProjectLevel2UpdateManyMutationInput!, where: NestedProjectLevel2WhereInput): AffectedRowsOutput!
   updateManyProfile(data: ProfileUpdateManyMutationInput!, where: ProfileWhereInput): AffectedRowsOutput!
   updateManyProject(data: ProjectUpdateManyMutationInput!, where: ProjectWhereInput): AffectedRowsOutput!
   updateManyPublication(data: PublicationUpdateManyMutationInput!, where: PublicationWhereInput): AffectedRowsOutput!
@@ -1638,6 +1664,8 @@ type Mutation {
   updateManyUser(data: UserUpdateManyMutationInput!, where: UserWhereInput): AffectedRowsOutput!
   updateManyVolunteer(data: VolunteerUpdateManyMutationInput!, where: VolunteerWhereInput): AffectedRowsOutput!
   updateManyWork(data: WorkUpdateManyMutationInput!, where: WorkWhereInput): AffectedRowsOutput!
+  updateNestedProjectLevel1(data: NestedProjectLevel1UpdateInput!, where: NestedProjectLevel1WhereUniqueInput!): NestedProjectLevel1
+  updateNestedProjectLevel2(data: NestedProjectLevel2UpdateInput!, where: NestedProjectLevel2WhereUniqueInput!): NestedProjectLevel2
   updateProfile(data: ProfileUpdateInput!, where: ProfileWhereUniqueInput!): Profile
   updateProject(data: ProjectUpdateInput!, where: ProjectWhereUniqueInput!): Project
   updatePublication(data: PublicationUpdateInput!, where: PublicationWhereUniqueInput!): Publication
@@ -1651,6 +1679,8 @@ type Mutation {
   upsertInterest(create: InterestCreateInput!, update: InterestUpdateInput!, where: InterestWhereUniqueInput!): Interest!
   upsertLanguage(create: LanguageCreateInput!, update: LanguageUpdateInput!, where: LanguageWhereUniqueInput!): Language!
   upsertLocation(create: LocationCreateInput!, update: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location!
+  upsertNestedProjectLevel1(create: NestedProjectLevel1CreateInput!, update: NestedProjectLevel1UpdateInput!, where: NestedProjectLevel1WhereUniqueInput!): NestedProjectLevel1!
+  upsertNestedProjectLevel2(create: NestedProjectLevel2CreateInput!, update: NestedProjectLevel2UpdateInput!, where: NestedProjectLevel2WhereUniqueInput!): NestedProjectLevel2!
   upsertProfile(create: ProfileCreateInput!, update: ProfileUpdateInput!, where: ProfileWhereUniqueInput!): Profile!
   upsertProject(create: ProjectCreateInput!, update: ProjectUpdateInput!, where: ProjectWhereUniqueInput!): Project!
   upsertPublication(create: PublicationCreateInput!, update: PublicationUpdateInput!, where: PublicationWhereUniqueInput!): Publication!
@@ -1722,6 +1752,497 @@ input NestedIntWithAggregatesFilter {
   lte: Int
   not: NestedIntWithAggregatesFilter
   notIn: [Int!]
+}
+
+type NestedProjectLevel1 {
+  _count: NestedProjectLevel1Count
+  id: Int!
+  level2(cursor: NestedProjectLevel2WhereUniqueInput, distinct: [NestedProjectLevel2ScalarFieldEnum!], orderBy: [NestedProjectLevel2OrderByWithRelationInput!], skip: Int, take: Int, where: NestedProjectLevel2WhereInput): [NestedProjectLevel2!]!
+  name: String!
+  project: Project
+  projectId: Int!
+}
+
+type NestedProjectLevel1AvgAggregate {
+  id: Float
+  projectId: Float
+}
+
+input NestedProjectLevel1AvgOrderByAggregateInput {
+  id: SortOrder
+  projectId: SortOrder
+}
+
+type NestedProjectLevel1Count {
+  level2: Int!
+}
+
+type NestedProjectLevel1CountAggregate {
+  _all: Int!
+  id: Int!
+  name: Int!
+  projectId: Int!
+}
+
+input NestedProjectLevel1CountOrderByAggregateInput {
+  id: SortOrder
+  name: SortOrder
+  projectId: SortOrder
+}
+
+input NestedProjectLevel1CreateInput {
+  level2: NestedProjectLevel2CreateNestedManyWithoutProjectInput
+  name: String!
+  project: ProjectCreateNestedOneWithoutNestedLevel1Input
+}
+
+input NestedProjectLevel1CreateManyInput {
+  name: String!
+  projectId: Int!
+}
+
+input NestedProjectLevel1CreateManyProjectInput {
+  name: String!
+}
+
+input NestedProjectLevel1CreateManyProjectInputEnvelope {
+  data: [NestedProjectLevel1CreateManyProjectInput!]!
+  skipDuplicates: Boolean
+}
+
+input NestedProjectLevel1CreateNestedManyWithoutProjectInput {
+  connect: [NestedProjectLevel1WhereUniqueInput!]
+  connectOrCreate: [NestedProjectLevel1CreateOrConnectWithoutProjectInput!]
+  create: [NestedProjectLevel1CreateWithoutProjectInput!]
+  createMany: NestedProjectLevel1CreateManyProjectInputEnvelope
+}
+
+input NestedProjectLevel1CreateNestedOneWithoutLevel2Input {
+  connect: NestedProjectLevel1WhereUniqueInput
+  connectOrCreate: NestedProjectLevel1CreateOrConnectWithoutLevel2Input
+  create: NestedProjectLevel1CreateWithoutLevel2Input
+}
+
+input NestedProjectLevel1CreateOrConnectWithoutLevel2Input {
+  create: NestedProjectLevel1CreateWithoutLevel2Input!
+  where: NestedProjectLevel1WhereUniqueInput!
+}
+
+input NestedProjectLevel1CreateOrConnectWithoutProjectInput {
+  create: NestedProjectLevel1CreateWithoutProjectInput!
+  where: NestedProjectLevel1WhereUniqueInput!
+}
+
+input NestedProjectLevel1CreateWithoutLevel2Input {
+  name: String!
+  project: ProjectCreateNestedOneWithoutNestedLevel1Input
+}
+
+input NestedProjectLevel1CreateWithoutProjectInput {
+  level2: NestedProjectLevel2CreateNestedManyWithoutProjectInput
+  name: String!
+}
+
+type NestedProjectLevel1GroupBy {
+  _avg: NestedProjectLevel1AvgAggregate
+  _count: NestedProjectLevel1CountAggregate
+  _max: NestedProjectLevel1MaxAggregate
+  _min: NestedProjectLevel1MinAggregate
+  _sum: NestedProjectLevel1SumAggregate
+  id: Int!
+  name: String!
+  projectId: Int!
+}
+
+input NestedProjectLevel1ListRelationFilter {
+  every: NestedProjectLevel1WhereInput
+  none: NestedProjectLevel1WhereInput
+  some: NestedProjectLevel1WhereInput
+}
+
+type NestedProjectLevel1MaxAggregate {
+  id: Int
+  name: String
+  projectId: Int
+}
+
+input NestedProjectLevel1MaxOrderByAggregateInput {
+  id: SortOrder
+  name: SortOrder
+  projectId: SortOrder
+}
+
+type NestedProjectLevel1MinAggregate {
+  id: Int
+  name: String
+  projectId: Int
+}
+
+input NestedProjectLevel1MinOrderByAggregateInput {
+  id: SortOrder
+  name: SortOrder
+  projectId: SortOrder
+}
+
+input NestedProjectLevel1OrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input NestedProjectLevel1OrderByWithAggregationInput {
+  _avg: NestedProjectLevel1AvgOrderByAggregateInput
+  _count: NestedProjectLevel1CountOrderByAggregateInput
+  _max: NestedProjectLevel1MaxOrderByAggregateInput
+  _min: NestedProjectLevel1MinOrderByAggregateInput
+  _sum: NestedProjectLevel1SumOrderByAggregateInput
+  id: SortOrder
+  name: SortOrder
+  projectId: SortOrder
+}
+
+input NestedProjectLevel1OrderByWithRelationInput {
+  id: SortOrder
+  level2: NestedProjectLevel2OrderByRelationAggregateInput
+  name: SortOrder
+  project: ProjectOrderByWithRelationInput
+  projectId: SortOrder
+}
+
+input NestedProjectLevel1RelationFilter {
+  is: NestedProjectLevel1WhereInput
+  isNot: NestedProjectLevel1WhereInput
+}
+
+enum NestedProjectLevel1ScalarFieldEnum {
+  id
+  name
+  projectId
+}
+
+input NestedProjectLevel1ScalarWhereInput {
+  AND: [NestedProjectLevel1ScalarWhereInput!]
+  NOT: [NestedProjectLevel1ScalarWhereInput!]
+  OR: [NestedProjectLevel1ScalarWhereInput!]
+  id: IntFilter
+  name: StringFilter
+  projectId: IntFilter
+}
+
+input NestedProjectLevel1ScalarWhereWithAggregatesInput {
+  AND: [NestedProjectLevel1ScalarWhereWithAggregatesInput!]
+  NOT: [NestedProjectLevel1ScalarWhereWithAggregatesInput!]
+  OR: [NestedProjectLevel1ScalarWhereWithAggregatesInput!]
+  id: IntWithAggregatesFilter
+  name: StringWithAggregatesFilter
+  projectId: IntWithAggregatesFilter
+}
+
+type NestedProjectLevel1SumAggregate {
+  id: Int
+  projectId: Int
+}
+
+input NestedProjectLevel1SumOrderByAggregateInput {
+  id: SortOrder
+  projectId: SortOrder
+}
+
+input NestedProjectLevel1UpdateInput {
+  level2: NestedProjectLevel2UpdateManyWithoutProjectInput
+  name: StringFieldUpdateOperationsInput
+  project: ProjectUpdateOneWithoutNestedLevel1Input
+}
+
+input NestedProjectLevel1UpdateManyMutationInput {
+  name: StringFieldUpdateOperationsInput
+}
+
+input NestedProjectLevel1UpdateManyWithWhereWithoutProjectInput {
+  data: NestedProjectLevel1UpdateManyMutationInput!
+  where: NestedProjectLevel1ScalarWhereInput!
+}
+
+input NestedProjectLevel1UpdateManyWithoutProjectInput {
+  connect: [NestedProjectLevel1WhereUniqueInput!]
+  connectOrCreate: [NestedProjectLevel1CreateOrConnectWithoutProjectInput!]
+  create: [NestedProjectLevel1CreateWithoutProjectInput!]
+  createMany: NestedProjectLevel1CreateManyProjectInputEnvelope
+  delete: [NestedProjectLevel1WhereUniqueInput!]
+  deleteMany: [NestedProjectLevel1ScalarWhereInput!]
+  disconnect: [NestedProjectLevel1WhereUniqueInput!]
+  set: [NestedProjectLevel1WhereUniqueInput!]
+  update: [NestedProjectLevel1UpdateWithWhereUniqueWithoutProjectInput!]
+  updateMany: [NestedProjectLevel1UpdateManyWithWhereWithoutProjectInput!]
+  upsert: [NestedProjectLevel1UpsertWithWhereUniqueWithoutProjectInput!]
+}
+
+input NestedProjectLevel1UpdateOneWithoutLevel2Input {
+  connect: NestedProjectLevel1WhereUniqueInput
+  connectOrCreate: NestedProjectLevel1CreateOrConnectWithoutLevel2Input
+  create: NestedProjectLevel1CreateWithoutLevel2Input
+  delete: Boolean
+  disconnect: Boolean
+  update: NestedProjectLevel1UpdateWithoutLevel2Input
+  upsert: NestedProjectLevel1UpsertWithoutLevel2Input
+}
+
+input NestedProjectLevel1UpdateWithWhereUniqueWithoutProjectInput {
+  data: NestedProjectLevel1UpdateWithoutProjectInput!
+  where: NestedProjectLevel1WhereUniqueInput!
+}
+
+input NestedProjectLevel1UpdateWithoutLevel2Input {
+  name: StringFieldUpdateOperationsInput
+  project: ProjectUpdateOneWithoutNestedLevel1Input
+}
+
+input NestedProjectLevel1UpdateWithoutProjectInput {
+  level2: NestedProjectLevel2UpdateManyWithoutProjectInput
+  name: StringFieldUpdateOperationsInput
+}
+
+input NestedProjectLevel1UpsertWithWhereUniqueWithoutProjectInput {
+  create: NestedProjectLevel1CreateWithoutProjectInput!
+  update: NestedProjectLevel1UpdateWithoutProjectInput!
+  where: NestedProjectLevel1WhereUniqueInput!
+}
+
+input NestedProjectLevel1UpsertWithoutLevel2Input {
+  create: NestedProjectLevel1CreateWithoutLevel2Input!
+  update: NestedProjectLevel1UpdateWithoutLevel2Input!
+}
+
+input NestedProjectLevel1WhereInput {
+  AND: [NestedProjectLevel1WhereInput!]
+  NOT: [NestedProjectLevel1WhereInput!]
+  OR: [NestedProjectLevel1WhereInput!]
+  id: IntFilter
+  level2: NestedProjectLevel2ListRelationFilter
+  name: StringFilter
+  project: ProjectRelationFilter
+  projectId: IntFilter
+}
+
+input NestedProjectLevel1WhereUniqueInput {
+  id: Int
+}
+
+type NestedProjectLevel2 {
+  id: Int!
+  name: String!
+  project: NestedProjectLevel1
+  projectId: Int!
+}
+
+type NestedProjectLevel2AvgAggregate {
+  id: Float
+  projectId: Float
+}
+
+input NestedProjectLevel2AvgOrderByAggregateInput {
+  id: SortOrder
+  projectId: SortOrder
+}
+
+type NestedProjectLevel2CountAggregate {
+  _all: Int!
+  id: Int!
+  name: Int!
+  projectId: Int!
+}
+
+input NestedProjectLevel2CountOrderByAggregateInput {
+  id: SortOrder
+  name: SortOrder
+  projectId: SortOrder
+}
+
+input NestedProjectLevel2CreateInput {
+  name: String!
+  project: NestedProjectLevel1CreateNestedOneWithoutLevel2Input
+}
+
+input NestedProjectLevel2CreateManyInput {
+  name: String!
+  projectId: Int!
+}
+
+input NestedProjectLevel2CreateManyProjectInput {
+  name: String!
+}
+
+input NestedProjectLevel2CreateManyProjectInputEnvelope {
+  data: [NestedProjectLevel2CreateManyProjectInput!]!
+  skipDuplicates: Boolean
+}
+
+input NestedProjectLevel2CreateNestedManyWithoutProjectInput {
+  connect: [NestedProjectLevel2WhereUniqueInput!]
+  connectOrCreate: [NestedProjectLevel2CreateOrConnectWithoutProjectInput!]
+  create: [NestedProjectLevel2CreateWithoutProjectInput!]
+  createMany: NestedProjectLevel2CreateManyProjectInputEnvelope
+}
+
+input NestedProjectLevel2CreateOrConnectWithoutProjectInput {
+  create: NestedProjectLevel2CreateWithoutProjectInput!
+  where: NestedProjectLevel2WhereUniqueInput!
+}
+
+input NestedProjectLevel2CreateWithoutProjectInput {
+  name: String!
+}
+
+type NestedProjectLevel2GroupBy {
+  _avg: NestedProjectLevel2AvgAggregate
+  _count: NestedProjectLevel2CountAggregate
+  _max: NestedProjectLevel2MaxAggregate
+  _min: NestedProjectLevel2MinAggregate
+  _sum: NestedProjectLevel2SumAggregate
+  id: Int!
+  name: String!
+  projectId: Int!
+}
+
+input NestedProjectLevel2ListRelationFilter {
+  every: NestedProjectLevel2WhereInput
+  none: NestedProjectLevel2WhereInput
+  some: NestedProjectLevel2WhereInput
+}
+
+type NestedProjectLevel2MaxAggregate {
+  id: Int
+  name: String
+  projectId: Int
+}
+
+input NestedProjectLevel2MaxOrderByAggregateInput {
+  id: SortOrder
+  name: SortOrder
+  projectId: SortOrder
+}
+
+type NestedProjectLevel2MinAggregate {
+  id: Int
+  name: String
+  projectId: Int
+}
+
+input NestedProjectLevel2MinOrderByAggregateInput {
+  id: SortOrder
+  name: SortOrder
+  projectId: SortOrder
+}
+
+input NestedProjectLevel2OrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input NestedProjectLevel2OrderByWithAggregationInput {
+  _avg: NestedProjectLevel2AvgOrderByAggregateInput
+  _count: NestedProjectLevel2CountOrderByAggregateInput
+  _max: NestedProjectLevel2MaxOrderByAggregateInput
+  _min: NestedProjectLevel2MinOrderByAggregateInput
+  _sum: NestedProjectLevel2SumOrderByAggregateInput
+  id: SortOrder
+  name: SortOrder
+  projectId: SortOrder
+}
+
+input NestedProjectLevel2OrderByWithRelationInput {
+  id: SortOrder
+  name: SortOrder
+  project: NestedProjectLevel1OrderByWithRelationInput
+  projectId: SortOrder
+}
+
+enum NestedProjectLevel2ScalarFieldEnum {
+  id
+  name
+  projectId
+}
+
+input NestedProjectLevel2ScalarWhereInput {
+  AND: [NestedProjectLevel2ScalarWhereInput!]
+  NOT: [NestedProjectLevel2ScalarWhereInput!]
+  OR: [NestedProjectLevel2ScalarWhereInput!]
+  id: IntFilter
+  name: StringFilter
+  projectId: IntFilter
+}
+
+input NestedProjectLevel2ScalarWhereWithAggregatesInput {
+  AND: [NestedProjectLevel2ScalarWhereWithAggregatesInput!]
+  NOT: [NestedProjectLevel2ScalarWhereWithAggregatesInput!]
+  OR: [NestedProjectLevel2ScalarWhereWithAggregatesInput!]
+  id: IntWithAggregatesFilter
+  name: StringWithAggregatesFilter
+  projectId: IntWithAggregatesFilter
+}
+
+type NestedProjectLevel2SumAggregate {
+  id: Int
+  projectId: Int
+}
+
+input NestedProjectLevel2SumOrderByAggregateInput {
+  id: SortOrder
+  projectId: SortOrder
+}
+
+input NestedProjectLevel2UpdateInput {
+  name: StringFieldUpdateOperationsInput
+  project: NestedProjectLevel1UpdateOneWithoutLevel2Input
+}
+
+input NestedProjectLevel2UpdateManyMutationInput {
+  name: StringFieldUpdateOperationsInput
+}
+
+input NestedProjectLevel2UpdateManyWithWhereWithoutProjectInput {
+  data: NestedProjectLevel2UpdateManyMutationInput!
+  where: NestedProjectLevel2ScalarWhereInput!
+}
+
+input NestedProjectLevel2UpdateManyWithoutProjectInput {
+  connect: [NestedProjectLevel2WhereUniqueInput!]
+  connectOrCreate: [NestedProjectLevel2CreateOrConnectWithoutProjectInput!]
+  create: [NestedProjectLevel2CreateWithoutProjectInput!]
+  createMany: NestedProjectLevel2CreateManyProjectInputEnvelope
+  delete: [NestedProjectLevel2WhereUniqueInput!]
+  deleteMany: [NestedProjectLevel2ScalarWhereInput!]
+  disconnect: [NestedProjectLevel2WhereUniqueInput!]
+  set: [NestedProjectLevel2WhereUniqueInput!]
+  update: [NestedProjectLevel2UpdateWithWhereUniqueWithoutProjectInput!]
+  updateMany: [NestedProjectLevel2UpdateManyWithWhereWithoutProjectInput!]
+  upsert: [NestedProjectLevel2UpsertWithWhereUniqueWithoutProjectInput!]
+}
+
+input NestedProjectLevel2UpdateWithWhereUniqueWithoutProjectInput {
+  data: NestedProjectLevel2UpdateWithoutProjectInput!
+  where: NestedProjectLevel2WhereUniqueInput!
+}
+
+input NestedProjectLevel2UpdateWithoutProjectInput {
+  name: StringFieldUpdateOperationsInput
+}
+
+input NestedProjectLevel2UpsertWithWhereUniqueWithoutProjectInput {
+  create: NestedProjectLevel2CreateWithoutProjectInput!
+  update: NestedProjectLevel2UpdateWithoutProjectInput!
+  where: NestedProjectLevel2WhereUniqueInput!
+}
+
+input NestedProjectLevel2WhereInput {
+  AND: [NestedProjectLevel2WhereInput!]
+  NOT: [NestedProjectLevel2WhereInput!]
+  OR: [NestedProjectLevel2WhereInput!]
+  id: IntFilter
+  name: StringFilter
+  project: NestedProjectLevel1RelationFilter
+  projectId: IntFilter
+}
+
+input NestedProjectLevel2WhereUniqueInput {
+  id: Int
 }
 
 input NestedStringFilter {
@@ -2017,6 +2538,7 @@ input ProfileWhereUniqueInput {
 }
 
 type Project {
+  _count: ProjectCount
   description: String!
   endDate: DateTime!
   entity: String!
@@ -2024,6 +2546,7 @@ type Project {
   id: Int!
   keywords: [String!]!
   name: String!
+  nestedLevel1(cursor: NestedProjectLevel1WhereUniqueInput, distinct: [NestedProjectLevel1ScalarFieldEnum!], orderBy: [NestedProjectLevel1OrderByWithRelationInput!], skip: Int, take: Int, where: NestedProjectLevel1WhereInput): [NestedProjectLevel1!]!
   roles: [String!]!
   startDate: DateTime!
   type: String!
@@ -2040,6 +2563,10 @@ type ProjectAvgAggregate {
 input ProjectAvgOrderByAggregateInput {
   id: SortOrder
   userId: SortOrder
+}
+
+type ProjectCount {
+  nestedLevel1: Int!
 }
 
 type ProjectCountAggregate {
@@ -2080,6 +2607,7 @@ input ProjectCreateInput {
   highlights: ProjectCreatehighlightsInput
   keywords: ProjectCreatekeywordsInput
   name: String!
+  nestedLevel1: NestedProjectLevel1CreateNestedManyWithoutProjectInput
   roles: ProjectCreaterolesInput
   startDate: DateTime!
   type: String!
@@ -2126,9 +2654,34 @@ input ProjectCreateNestedManyWithoutUserInput {
   createMany: ProjectCreateManyUserInputEnvelope
 }
 
+input ProjectCreateNestedOneWithoutNestedLevel1Input {
+  connect: ProjectWhereUniqueInput
+  connectOrCreate: ProjectCreateOrConnectWithoutNestedLevel1Input
+  create: ProjectCreateWithoutNestedLevel1Input
+}
+
+input ProjectCreateOrConnectWithoutNestedLevel1Input {
+  create: ProjectCreateWithoutNestedLevel1Input!
+  where: ProjectWhereUniqueInput!
+}
+
 input ProjectCreateOrConnectWithoutUserInput {
   create: ProjectCreateWithoutUserInput!
   where: ProjectWhereUniqueInput!
+}
+
+input ProjectCreateWithoutNestedLevel1Input {
+  description: String!
+  endDate: DateTime!
+  entity: String!
+  highlights: ProjectCreatehighlightsInput
+  keywords: ProjectCreatekeywordsInput
+  name: String!
+  roles: ProjectCreaterolesInput
+  startDate: DateTime!
+  type: String!
+  url: String!
+  user: UserCreateNestedOneWithoutProjectsInput
 }
 
 input ProjectCreateWithoutUserInput {
@@ -2138,6 +2691,7 @@ input ProjectCreateWithoutUserInput {
   highlights: ProjectCreatehighlightsInput
   keywords: ProjectCreatekeywordsInput
   name: String!
+  nestedLevel1: NestedProjectLevel1CreateNestedManyWithoutProjectInput
   roles: ProjectCreaterolesInput
   startDate: DateTime!
   type: String!
@@ -2262,12 +2816,18 @@ input ProjectOrderByWithRelationInput {
   id: SortOrder
   keywords: SortOrder
   name: SortOrder
+  nestedLevel1: NestedProjectLevel1OrderByRelationAggregateInput
   roles: SortOrder
   startDate: SortOrder
   type: SortOrder
   url: SortOrder
   user: UserOrderByWithRelationInput
   userId: SortOrder
+}
+
+input ProjectRelationFilter {
+  is: ProjectWhereInput
+  isNot: ProjectWhereInput
 }
 
 enum ProjectScalarFieldEnum {
@@ -2338,6 +2898,7 @@ input ProjectUpdateInput {
   highlights: ProjectUpdatehighlightsInput
   keywords: ProjectUpdatekeywordsInput
   name: StringFieldUpdateOperationsInput
+  nestedLevel1: NestedProjectLevel1UpdateManyWithoutProjectInput
   roles: ProjectUpdaterolesInput
   startDate: DateTimeFieldUpdateOperationsInput
   type: StringFieldUpdateOperationsInput
@@ -2377,9 +2938,33 @@ input ProjectUpdateManyWithoutUserInput {
   upsert: [ProjectUpsertWithWhereUniqueWithoutUserInput!]
 }
 
+input ProjectUpdateOneWithoutNestedLevel1Input {
+  connect: ProjectWhereUniqueInput
+  connectOrCreate: ProjectCreateOrConnectWithoutNestedLevel1Input
+  create: ProjectCreateWithoutNestedLevel1Input
+  delete: Boolean
+  disconnect: Boolean
+  update: ProjectUpdateWithoutNestedLevel1Input
+  upsert: ProjectUpsertWithoutNestedLevel1Input
+}
+
 input ProjectUpdateWithWhereUniqueWithoutUserInput {
   data: ProjectUpdateWithoutUserInput!
   where: ProjectWhereUniqueInput!
+}
+
+input ProjectUpdateWithoutNestedLevel1Input {
+  description: StringFieldUpdateOperationsInput
+  endDate: DateTimeFieldUpdateOperationsInput
+  entity: StringFieldUpdateOperationsInput
+  highlights: ProjectUpdatehighlightsInput
+  keywords: ProjectUpdatekeywordsInput
+  name: StringFieldUpdateOperationsInput
+  roles: ProjectUpdaterolesInput
+  startDate: DateTimeFieldUpdateOperationsInput
+  type: StringFieldUpdateOperationsInput
+  url: StringFieldUpdateOperationsInput
+  user: UserUpdateOneWithoutProjectsInput
 }
 
 input ProjectUpdateWithoutUserInput {
@@ -2389,6 +2974,7 @@ input ProjectUpdateWithoutUserInput {
   highlights: ProjectUpdatehighlightsInput
   keywords: ProjectUpdatekeywordsInput
   name: StringFieldUpdateOperationsInput
+  nestedLevel1: NestedProjectLevel1UpdateManyWithoutProjectInput
   roles: ProjectUpdaterolesInput
   startDate: DateTimeFieldUpdateOperationsInput
   type: StringFieldUpdateOperationsInput
@@ -2416,6 +3002,11 @@ input ProjectUpsertWithWhereUniqueWithoutUserInput {
   where: ProjectWhereUniqueInput!
 }
 
+input ProjectUpsertWithoutNestedLevel1Input {
+  create: ProjectCreateWithoutNestedLevel1Input!
+  update: ProjectUpdateWithoutNestedLevel1Input!
+}
+
 input ProjectWhereInput {
   AND: [ProjectWhereInput!]
   NOT: [ProjectWhereInput!]
@@ -2427,6 +3018,7 @@ input ProjectWhereInput {
   id: IntFilter
   keywords: StringNullableListFilter
   name: StringFilter
+  nestedLevel1: NestedProjectLevel1ListRelationFilter
   roles: StringNullableListFilter
   startDate: DateTimeFilter
   type: StringFilter
@@ -2748,6 +3340,8 @@ type Query {
   aggregateInterest(cursor: InterestWhereUniqueInput, orderBy: [InterestOrderByWithRelationInput!], skip: Int, take: Int, where: InterestWhereInput): AggregateInterest!
   aggregateLanguage(cursor: LanguageWhereUniqueInput, orderBy: [LanguageOrderByWithRelationInput!], skip: Int, take: Int, where: LanguageWhereInput): AggregateLanguage!
   aggregateLocation(cursor: LocationWhereUniqueInput, orderBy: [LocationOrderByWithRelationInput!], skip: Int, take: Int, where: LocationWhereInput): AggregateLocation!
+  aggregateNestedProjectLevel1(cursor: NestedProjectLevel1WhereUniqueInput, orderBy: [NestedProjectLevel1OrderByWithRelationInput!], skip: Int, take: Int, where: NestedProjectLevel1WhereInput): AggregateNestedProjectLevel1!
+  aggregateNestedProjectLevel2(cursor: NestedProjectLevel2WhereUniqueInput, orderBy: [NestedProjectLevel2OrderByWithRelationInput!], skip: Int, take: Int, where: NestedProjectLevel2WhereInput): AggregateNestedProjectLevel2!
   aggregateProfile(cursor: ProfileWhereUniqueInput, orderBy: [ProfileOrderByWithRelationInput!], skip: Int, take: Int, where: ProfileWhereInput): AggregateProfile!
   aggregateProject(cursor: ProjectWhereUniqueInput, orderBy: [ProjectOrderByWithRelationInput!], skip: Int, take: Int, where: ProjectWhereInput): AggregateProject!
   aggregatePublication(cursor: PublicationWhereUniqueInput, orderBy: [PublicationOrderByWithRelationInput!], skip: Int, take: Int, where: PublicationWhereInput): AggregatePublication!
@@ -2765,6 +3359,8 @@ type Query {
   findFirstInterest(cursor: InterestWhereUniqueInput, distinct: [InterestScalarFieldEnum!], orderBy: [InterestOrderByWithRelationInput!], skip: Int, take: Int, where: InterestWhereInput): Interest
   findFirstLanguage(cursor: LanguageWhereUniqueInput, distinct: [LanguageScalarFieldEnum!], orderBy: [LanguageOrderByWithRelationInput!], skip: Int, take: Int, where: LanguageWhereInput): Language
   findFirstLocation(cursor: LocationWhereUniqueInput, distinct: [LocationScalarFieldEnum!], orderBy: [LocationOrderByWithRelationInput!], skip: Int, take: Int, where: LocationWhereInput): Location
+  findFirstNestedProjectLevel1(cursor: NestedProjectLevel1WhereUniqueInput, distinct: [NestedProjectLevel1ScalarFieldEnum!], orderBy: [NestedProjectLevel1OrderByWithRelationInput!], skip: Int, take: Int, where: NestedProjectLevel1WhereInput): NestedProjectLevel1
+  findFirstNestedProjectLevel2(cursor: NestedProjectLevel2WhereUniqueInput, distinct: [NestedProjectLevel2ScalarFieldEnum!], orderBy: [NestedProjectLevel2OrderByWithRelationInput!], skip: Int, take: Int, where: NestedProjectLevel2WhereInput): NestedProjectLevel2
   findFirstProfile(cursor: ProfileWhereUniqueInput, distinct: [ProfileScalarFieldEnum!], orderBy: [ProfileOrderByWithRelationInput!], skip: Int, take: Int, where: ProfileWhereInput): Profile
   findFirstProject(cursor: ProjectWhereUniqueInput, distinct: [ProjectScalarFieldEnum!], orderBy: [ProjectOrderByWithRelationInput!], skip: Int, take: Int, where: ProjectWhereInput): Project
   findFirstPublication(cursor: PublicationWhereUniqueInput, distinct: [PublicationScalarFieldEnum!], orderBy: [PublicationOrderByWithRelationInput!], skip: Int, take: Int, where: PublicationWhereInput): Publication
@@ -2778,6 +3374,8 @@ type Query {
   groupByInterest(by: [InterestScalarFieldEnum!]!, having: InterestScalarWhereWithAggregatesInput, orderBy: [InterestOrderByWithAggregationInput!], skip: Int, take: Int, where: InterestWhereInput): [InterestGroupBy!]!
   groupByLanguage(by: [LanguageScalarFieldEnum!]!, having: LanguageScalarWhereWithAggregatesInput, orderBy: [LanguageOrderByWithAggregationInput!], skip: Int, take: Int, where: LanguageWhereInput): [LanguageGroupBy!]!
   groupByLocation(by: [LocationScalarFieldEnum!]!, having: LocationScalarWhereWithAggregatesInput, orderBy: [LocationOrderByWithAggregationInput!], skip: Int, take: Int, where: LocationWhereInput): [LocationGroupBy!]!
+  groupByNestedProjectLevel1(by: [NestedProjectLevel1ScalarFieldEnum!]!, having: NestedProjectLevel1ScalarWhereWithAggregatesInput, orderBy: [NestedProjectLevel1OrderByWithAggregationInput!], skip: Int, take: Int, where: NestedProjectLevel1WhereInput): [NestedProjectLevel1GroupBy!]!
+  groupByNestedProjectLevel2(by: [NestedProjectLevel2ScalarFieldEnum!]!, having: NestedProjectLevel2ScalarWhereWithAggregatesInput, orderBy: [NestedProjectLevel2OrderByWithAggregationInput!], skip: Int, take: Int, where: NestedProjectLevel2WhereInput): [NestedProjectLevel2GroupBy!]!
   groupByProfile(by: [ProfileScalarFieldEnum!]!, having: ProfileScalarWhereWithAggregatesInput, orderBy: [ProfileOrderByWithAggregationInput!], skip: Int, take: Int, where: ProfileWhereInput): [ProfileGroupBy!]!
   groupByProject(by: [ProjectScalarFieldEnum!]!, having: ProjectScalarWhereWithAggregatesInput, orderBy: [ProjectOrderByWithAggregationInput!], skip: Int, take: Int, where: ProjectWhereInput): [ProjectGroupBy!]!
   groupByPublication(by: [PublicationScalarFieldEnum!]!, having: PublicationScalarWhereWithAggregatesInput, orderBy: [PublicationOrderByWithAggregationInput!], skip: Int, take: Int, where: PublicationWhereInput): [PublicationGroupBy!]!
@@ -2792,6 +3390,10 @@ type Query {
   languages(cursor: LanguageWhereUniqueInput, distinct: [LanguageScalarFieldEnum!], orderBy: [LanguageOrderByWithRelationInput!], skip: Int, take: Int, where: LanguageWhereInput): [Language!]!
   location(where: LocationWhereUniqueInput!): Location
   locations(cursor: LocationWhereUniqueInput, distinct: [LocationScalarFieldEnum!], orderBy: [LocationOrderByWithRelationInput!], skip: Int, take: Int, where: LocationWhereInput): [Location!]!
+  nestedProjectLevel1(where: NestedProjectLevel1WhereUniqueInput!): NestedProjectLevel1
+  nestedProjectLevel1s(cursor: NestedProjectLevel1WhereUniqueInput, distinct: [NestedProjectLevel1ScalarFieldEnum!], orderBy: [NestedProjectLevel1OrderByWithRelationInput!], skip: Int, take: Int, where: NestedProjectLevel1WhereInput): [NestedProjectLevel1!]!
+  nestedProjectLevel2(where: NestedProjectLevel2WhereUniqueInput!): NestedProjectLevel2
+  nestedProjectLevel2s(cursor: NestedProjectLevel2WhereUniqueInput, distinct: [NestedProjectLevel2ScalarFieldEnum!], orderBy: [NestedProjectLevel2OrderByWithRelationInput!], skip: Int, take: Int, where: NestedProjectLevel2WhereInput): [NestedProjectLevel2!]!
   profile(where: ProfileWhereUniqueInput!): Profile
   profiles(cursor: ProfileWhereUniqueInput, distinct: [ProfileScalarFieldEnum!], orderBy: [ProfileOrderByWithRelationInput!], skip: Int, take: Int, where: ProfileWhereInput): [Profile!]!
   project(where: ProjectWhereUniqueInput!): Project

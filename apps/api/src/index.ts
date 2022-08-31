@@ -19,13 +19,17 @@ export interface Context {
   userEmail?: string;
 }
 
+function lowerCaseFirstLetter(string: string) {
+  return string.charAt(0).toLowerCase() + string.slice(1);
+}
+
 const createManyReadMiddlewares = <TModel extends Prisma.ModelName>(model: TModel) => {
   return {
     [`aggregate${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
     [`deleteMany${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
     [`findFirst${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
-    [`${model.toLowerCase()}s`]: [UseMiddleware(createFindManyMiddleware(model))],
-    [`${model.toLowerCase()}`]: [UseMiddleware(createFindSingleMiddleware(model))],
+    [`${lowerCaseFirstLetter(model)}s`]: [UseMiddleware(createFindManyMiddleware(model))],
+    [`${lowerCaseFirstLetter(model)}`]: [UseMiddleware(createFindSingleMiddleware(model))],
     [`groupBy${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
     [`updateMany${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
   } as unknown as ResolverActionsConfig<TModel>;

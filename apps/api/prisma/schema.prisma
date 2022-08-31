@@ -53,7 +53,6 @@ model Location {
   userId Int   @unique @map("user_id")
   user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-
   @@map("location")
 }
 
@@ -67,7 +66,6 @@ model Profile {
 
   userId Int   @map("user_id")
   user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
 
   @@map("profile")
 }
@@ -217,8 +215,30 @@ model Project {
   entity      String
   type        String
 
-  userId Int   @map("user_id")
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       Int                   @map("user_id")
+  user         User?                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  nestedLevel1 NestedProjectLevel1[]
 
   @@map("project")
+}
+
+model NestedProjectLevel1 {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id        Int                   @id @default(autoincrement())
+  name      String
+  projectId Int                   @map("project_id")
+  project   Project?              @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  level2    NestedProjectLevel2[]
+
+  @@map("nested_project_level_1")
+}
+
+model NestedProjectLevel2 {
+  /// @TypeGraphQL.omit(input: ["update", "create"])
+  id        Int                  @id @default(autoincrement())
+  name      String
+  projectId Int                  @map("project_id")
+  project   NestedProjectLevel1? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("nested_project_level_2")
 }
