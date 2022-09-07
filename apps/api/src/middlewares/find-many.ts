@@ -36,11 +36,6 @@ export const createFindSingleMiddleware = (model: Prisma.ModelName) => {
     const userAbility = await createUserAbility(context);
     const userWhere = accessibleBy(userAbility)[model];
 
-    resolverData.args.where = args.where
-      ? {
-          AND: [args.where, userWhere],
-        }
-      : userWhere;
     console.timeEnd(`Running findSingle middleware for model "${model}" took: `);
 
     /**
@@ -51,6 +46,11 @@ export const createFindSingleMiddleware = (model: Prisma.ModelName) => {
      * from the userAbility is not important right now. This works
      */
     const actualResult = await next();
+    resolverData.args.where = args.where
+      ? {
+          AND: [args.where, userWhere],
+        }
+      : userWhere;
     const { _count } = transformFields(graphqlFields(resolverData.info));
     const result = await resolverData.context.prisma[model].findFirst({
       ...resolverData.args,
