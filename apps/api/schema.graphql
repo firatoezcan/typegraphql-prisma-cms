@@ -177,6 +177,7 @@ input AwardCreateInput {
 input AwardCreateManyInput {
   awarder: String!
   date: DateTime!
+  id: Int
   summary: String!
   title: String!
   userId: Int!
@@ -185,6 +186,7 @@ input AwardCreateManyInput {
 input AwardCreateManyUserInput {
   awarder: String!
   date: DateTime!
+  id: Int
   summary: String!
   title: String!
 }
@@ -510,6 +512,7 @@ input EducationCreateManyInput {
   area: String!
   courses: EducationCreatecoursesInput
   endDate: DateTime!
+  id: Int
   institution: String!
   score: String!
   startDate: DateTime!
@@ -522,6 +525,7 @@ input EducationCreateManyUserInput {
   area: String!
   courses: EducationCreatecoursesInput
   endDate: DateTime!
+  id: Int
   institution: String!
   score: String!
   startDate: DateTime!
@@ -881,12 +885,14 @@ input InterestCreateInput {
 }
 
 input InterestCreateManyInput {
+  id: Int
   keywords: InterestCreatekeywordsInput
   name: String!
   userId: Int!
 }
 
 input InterestCreateManyUserInput {
+  id: Int
   keywords: InterestCreatekeywordsInput
   name: String!
 }
@@ -1127,12 +1133,14 @@ input LanguageCreateInput {
 
 input LanguageCreateManyInput {
   fluency: String!
+  id: Int
   name: String!
   userId: Int!
 }
 
 input LanguageCreateManyUserInput {
   fluency: String!
+  id: Int
   name: String!
 }
 
@@ -1381,6 +1389,7 @@ input LocationCreateManyInput {
   address: String!
   city: String!
   countryCode: String!
+  id: Int
   postalCode: String!
   region: String!
   userId: Int!
@@ -1797,11 +1806,13 @@ input NestedProjectLevel1CreateInput {
 }
 
 input NestedProjectLevel1CreateManyInput {
+  id: Int
   name: String!
   projectId: Int!
 }
 
 input NestedProjectLevel1CreateManyProjectInput {
+  id: Int
   name: String!
 }
 
@@ -2062,11 +2073,13 @@ input NestedProjectLevel2CreateInput {
 }
 
 input NestedProjectLevel2CreateManyInput {
+  id: Int
   name: String!
   projectId: Int!
 }
 
 input NestedProjectLevel2CreateManyProjectInput {
+  id: Int
   name: String!
 }
 
@@ -2320,6 +2333,7 @@ input ProfileCreateInput {
 }
 
 input ProfileCreateManyInput {
+  id: Int
   network: String!
   url: String!
   userId: Int!
@@ -2327,6 +2341,7 @@ input ProfileCreateManyInput {
 }
 
 input ProfileCreateManyUserInput {
+  id: Int
   network: String!
   url: String!
   username: String!
@@ -2620,6 +2635,7 @@ input ProjectCreateManyInput {
   endDate: DateTime!
   entity: String!
   highlights: ProjectCreatehighlightsInput
+  id: Int
   keywords: ProjectCreatekeywordsInput
   name: String!
   roles: ProjectCreaterolesInput
@@ -2634,6 +2650,7 @@ input ProjectCreateManyUserInput {
   endDate: DateTime!
   entity: String!
   highlights: ProjectCreatehighlightsInput
+  id: Int
   keywords: ProjectCreatekeywordsInput
   name: String!
   roles: ProjectCreaterolesInput
@@ -3083,6 +3100,7 @@ input PublicationCreateInput {
 }
 
 input PublicationCreateManyInput {
+  id: Int
   name: String!
   publisher: String!
   releaseDate: DateTime!
@@ -3092,6 +3110,7 @@ input PublicationCreateManyInput {
 }
 
 input PublicationCreateManyUserInput {
+  id: Int
   name: String!
   publisher: String!
   releaseDate: DateTime!
@@ -3457,12 +3476,14 @@ input ReferenceCreateInput {
 }
 
 input ReferenceCreateManyInput {
+  id: Int
   name: String!
   reference: String!
   userId: Int!
 }
 
 input ReferenceCreateManyUserInput {
+  id: Int
   name: String!
   reference: String!
 }
@@ -3702,6 +3723,7 @@ input SkillCreateInput {
 
 input SkillCreateManyInput {
   category: String!
+  id: Int
   keywords: SkillCreatekeywordsInput
   level: String!
   userId: Int!
@@ -3709,6 +3731,7 @@ input SkillCreateManyInput {
 
 input SkillCreateManyUserInput {
   category: String!
+  id: Int
   keywords: SkillCreatekeywordsInput
   level: String!
 }
@@ -4067,6 +4090,7 @@ input UserCreateInput {
 input UserCreateManyInput {
   email: String!
   firstName: String!
+  id: Int
   image: String!
   label: String!
   lastName: String!
@@ -5152,6 +5176,7 @@ input VolunteerCreateInput {
 input VolunteerCreateManyInput {
   endDate: DateTime!
   highlights: VolunteerCreatehighlightsInput
+  id: Int
   organization: String!
   position: String!
   startDate: DateTime!
@@ -5163,6 +5188,7 @@ input VolunteerCreateManyInput {
 input VolunteerCreateManyUserInput {
   endDate: DateTime!
   highlights: VolunteerCreatehighlightsInput
+  id: Int
   organization: String!
   position: String!
   startDate: DateTime!
@@ -5502,6 +5528,7 @@ input WorkCreateInput {
 input WorkCreateManyInput {
   endDate: DateTime!
   highlights: WorkCreatehighlightsInput
+  id: Int
   name: String!
   position: String!
   startDate: DateTime!
@@ -5513,6 +5540,7 @@ input WorkCreateManyInput {
 input WorkCreateManyUserInput {
   endDate: DateTime!
   highlights: WorkCreatehighlightsInput
+  id: Int
   name: String!
   position: String!
   startDate: DateTime!

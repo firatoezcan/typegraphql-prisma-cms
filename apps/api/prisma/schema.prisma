@@ -13,7 +13,6 @@ generator typegraphql {
 }
 
 model User {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id Int @id @default(autoincrement())
 
   firstName String @map("first_name")
@@ -41,7 +40,6 @@ model User {
 }
 
 model Location {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id Int @id @default(autoincrement())
 
   address     String
@@ -57,7 +55,6 @@ model Location {
 }
 
 model Profile {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id Int @id @default(autoincrement())
 
   network  String
@@ -71,7 +68,6 @@ model Profile {
 }
 
 model Work {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id         Int      @id @default(autoincrement())
   name       String
   position   String
@@ -88,7 +84,6 @@ model Work {
 }
 
 model Volunteer {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id           Int      @id @default(autoincrement())
   organization String
   position     String
@@ -105,7 +100,6 @@ model Volunteer {
 }
 
 model Education {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id          Int      @id @default(autoincrement())
   institution String
   area        String
@@ -123,7 +117,6 @@ model Education {
 }
 
 model Award {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id      Int      @id @default(autoincrement())
   title   String
   date    DateTime @db.Timestamptz
@@ -137,7 +130,6 @@ model Award {
 }
 
 model Publication {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id          Int      @id @default(autoincrement())
   name        String
   publisher   String
@@ -152,7 +144,6 @@ model Publication {
 }
 
 model Skill {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id       Int    @id @default(autoincrement())
   category String
   level    String
@@ -166,7 +157,6 @@ model Skill {
 }
 
 model Language {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id      Int    @id @default(autoincrement())
   name    String
   fluency String
@@ -178,7 +168,6 @@ model Language {
 }
 
 model Interest {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id       Int      @id @default(autoincrement())
   name     String
   keywords String[]
@@ -190,7 +179,6 @@ model Interest {
 }
 
 model Reference {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id        Int    @id @default(autoincrement())
   name      String
   reference String
@@ -202,7 +190,6 @@ model Reference {
 }
 
 model Project {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id          Int      @id @default(autoincrement())
   name        String
   description String
@@ -223,7 +210,6 @@ model Project {
 }
 
 model NestedProjectLevel1 {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id        Int                   @id @default(autoincrement())
   name      String
   projectId Int                   @map("project_id")
@@ -234,7 +220,6 @@ model NestedProjectLevel1 {
 }
 
 model NestedProjectLevel2 {
-  /// @TypeGraphQL.omit(input: ["update", "create"])
   id        Int                  @id @default(autoincrement())
   name      String
   projectId Int                  @map("project_id")

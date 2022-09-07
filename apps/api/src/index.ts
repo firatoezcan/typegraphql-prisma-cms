@@ -1,5 +1,6 @@
-import { prisma, Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { ApolloServer } from "apollo-server";
+import { ValidateNested } from "class-validator";
 import path from "path";
 import "reflect-metadata";
 import { buildSchema, UseMiddleware } from "type-graphql";
@@ -10,7 +11,10 @@ import {
   ResolverActionsConfig,
   RelationResolversEnhanceMap,
   applyRelationResolversEnhanceMap,
+  applyArgsTypesEnhanceMap,
+  applyInputTypesEnhanceMap,
 } from ".prisma/type-graphql";
+import { createCreateSingleMiddleware } from "./middlewares/create";
 import { createFindManyMiddleware, createFindSingleMiddleware } from "./middlewares/find-many";
 import { LogAccessMiddleware } from "./middlewares/log-access";
 
@@ -40,6 +44,8 @@ for (const model of Object.values(Prisma.ModelName)) {
   resolversEnhanceMap[model] = {
     _all: [UseMiddleware(LogAccessMiddleware)],
     ...createManyReadMiddlewares(model),
+    [`create${model}`]: [UseMiddleware(createCreateSingleMiddleware(model))],
+    [`createMany${model}`]: [UseMiddleware(createCreateSingleMiddleware(model))],
   };
 }
 

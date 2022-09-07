@@ -6,6 +6,8 @@ import {
   Interest,
   Language,
   Location,
+  NestedProjectLevel1,
+  NestedProjectLevel2,
   Prisma,
   Profile,
   Project,
@@ -16,12 +18,12 @@ import {
   Volunteer,
   Work,
 } from "@prisma/client";
-import { MiddlewareInterface, NextFn, ResolverData } from "type-graphql";
+import { time } from "console";
 import { Context } from "..";
 
-type AppAbility = PrismaAbility<
+export type AppAbility = PrismaAbility<
   [
-    "read",
+    "read" | "create",
     Subjects<{
       User: User;
       Location: Location;
@@ -36,15 +38,17 @@ type AppAbility = PrismaAbility<
       Interest: Interest;
       Reference: Reference;
       Project: Project;
+      NestedProjectLevel1: NestedProjectLevel1;
+      NestedProjectLevel2: NestedProjectLevel2;
     }>
   ]
 >;
 
 const AppAbility = PrismaAbility as AbilityClass<AppAbility>;
 
-const cache: Map<string, AppAbility> = new Map();
+const readCache: Map<string, AppAbility> = new Map();
 
-export const createUserAbility = async (context: Context) => {
+export const createUserReadAbility = async (context: Context) => {
   const { can, cannot, build } = new AbilityBuilder(AppAbility);
 
   const { userEmail, prisma } = context;
@@ -52,34 +56,78 @@ export const createUserAbility = async (context: Context) => {
     // Todo: Public only
     return build();
   }
-  if (cache.has(userEmail)) {
-    return cache.get(userEmail) as AppAbility;
+  if (readCache.has(userEmail)) {
+    return readCache.get(userEmail) as AppAbility;
   }
 
-  const user = await prisma.user.findUnique({ where: { email: userEmail }, select: { email: true } });
+  const user = await prisma.user.findUnique({ where: { email: userEmail }, select: { id: true } });
   if (!user) {
     throw new Error(`Couldn't find user with email "${userEmail}"`);
   }
 
-  const userPermission: Prisma.UserWhereInput = { email: { equals: userEmail } };
-
   // Todo: Generate this in a smart way depending on the location of the models
   can("read", "User");
-  can("read", "Location", { user: { is: userPermission } });
-  can("read", "Profile", { user: { is: userPermission } });
-  can("read", "Work", { user: { is: userPermission } });
-  can("read", "Volunteer", { user: { is: userPermission } });
-  can("read", "Education", { user: { is: userPermission } });
-  can("read", "Award", { user: { is: userPermission } });
-  can("read", "Publication", { user: { is: userPermission } });
-  can("read", "Skill", { user: { is: userPermission } });
-  can("read", "Language", { user: { is: userPermission } });
-  can("read", "Interest", { user: { is: userPermission } });
-  can("read", "Reference", { user: { is: userPermission } });
-  can("read", "Project", { user: { is: userPermission } });
-  can("read", "Award", { user: { is: userPermission } });
+  can("read", "Location", { userId: { equals: user.id } });
+  can("read", "Profile", { userId: { equals: user.id } });
+  can("read", "Work", { userId: { equals: user.id } });
+  can("read", "Volunteer", { userId: { equals: user.id } });
+  can("read", "Education", { userId: { equals: user.id } });
+  can("read", "Award", { userId: { equals: user.id } });
+  can("read", "Publication", { userId: { equals: user.id } });
+  can("read", "Skill", { userId: { equals: user.id } });
+  can("read", "Language", { userId: { equals: user.id } });
+  can("read", "Interest", { userId: { equals: user.id } });
+  can("read", "Reference", { userId: { equals: user.id } });
+  can("read", "Project", { userId: { equals: user.id } });
 
   const ability = build();
-  cache.set(userEmail, ability);
+  readCache.set(userEmail, ability);
   return ability;
+};
+
+const createCache: Map<string, AppAbility> = new Map();
+
+export const createUserCreateAbility = async (context: Context) => {
+  const { can, cannot, build } = new AbilityBuilder(AppAbility);
+
+  const { userEmail, prisma } = context;
+  if (!userEmail) {
+    can("create", "User");
+    cannot("create", "User", ["id"]).because(`Cannot manually insert "id"`);
+    cannot("create", "User", { email: { not: { endsWith: "@gmail.com" } } }).because(
+      `Email has to end with "@gmail.com"`
+    );
+    // Todo: Public only
+    return [undefined, build()] as const;
+  }
+
+  const user = await prisma.user.findUnique({ where: { email: userEmail }, select: { id: true } });
+  if (!user) {
+    throw new Error(`Couldn't find user with email "${userEmail}"`);
+  }
+
+  if (createCache.has(userEmail)) {
+    return [user, createCache.get(userEmail) as AppAbility] as const;
+  }
+
+  // Only allow gmail.com emails
+  can("create", "User");
+  // cannot("create", "User");
+
+  cannot("create", "Location", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
+  cannot("create", "Profile", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
+  cannot("create", "Work", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
+  cannot("create", "Volunteer", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
+  cannot("create", "Education", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
+  cannot("create", "Award", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
+  cannot("create", "Publication", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
+  cannot("create", "Skill", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
+  cannot("create", "Language", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
+  cannot("create", "Interest", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
+  cannot("create", "Reference", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
+  cannot("create", "Project", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
+
+  const ability = build();
+  createCache.set(userEmail, ability);
+  return [user, ability] as const;
 };

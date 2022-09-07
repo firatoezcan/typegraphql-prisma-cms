@@ -5,14 +5,14 @@ import graphqlFields from "graphql-fields";
 import { NextFn, ResolverData } from "type-graphql";
 import { Context } from "..";
 import { transformCountFieldIntoSelectRelationsCount, transformFields } from ".prisma/type-graphql/helpers";
-import { createUserAbility } from "../utils/permissions";
+import { createUserReadAbility } from "../utils/permissions";
 
 export const createFindManyMiddleware = (model: Prisma.ModelName) => {
   const FindManyMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
     const { context, args } = resolverData;
 
     console.time(`Running findMany middleware for model "${model}" took: `);
-    const userAbility = await createUserAbility(context);
+    const userAbility = await createUserReadAbility(context);
     const userWhere = accessibleBy(userAbility)[model];
 
     resolverData.args.where = args.where
@@ -33,7 +33,7 @@ export const createFindSingleMiddleware = (model: Prisma.ModelName) => {
     const { context, args } = resolverData;
 
     console.time(`Running findSingle middleware for model "${model}" took: `);
-    const userAbility = await createUserAbility(context);
+    const userAbility = await createUserReadAbility(context);
     const userWhere = accessibleBy(userAbility)[model];
 
     console.timeEnd(`Running findSingle middleware for model "${model}" took: `);
@@ -56,6 +56,7 @@ export const createFindSingleMiddleware = (model: Prisma.ModelName) => {
       ...resolverData.args,
       ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
     });
+    // Todo: Check unique columns here (could be something else than id)
     if (actualResult.id !== result.id) {
       return null;
     }
