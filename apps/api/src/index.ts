@@ -1,22 +1,21 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-import { ApolloServer } from "apollo-server";
-import { ValidateNested } from "class-validator";
-import path from "path";
 import "reflect-metadata";
-import { buildSchema, UseMiddleware } from "type-graphql";
 import {
+  applyRelationResolversEnhanceMap,
   applyResolversEnhanceMap,
+  RelationResolversEnhanceMap,
+  ResolverActionsConfig,
   resolvers,
   ResolversEnhanceMap,
-  ResolverActionsConfig,
-  RelationResolversEnhanceMap,
-  applyRelationResolversEnhanceMap,
   applyArgsTypesEnhanceMap,
   applyInputTypesEnhanceMap,
 } from ".prisma/type-graphql";
-import { createCreateSingleMiddleware } from "./middlewares/create";
-import { createFindManyMiddleware, createFindSingleMiddleware } from "./middlewares/find-many";
-import { LogAccessMiddleware } from "./middlewares/log-access";
+import { Prisma, PrismaClient } from "@prisma/client";
+import { ApolloServer } from "apollo-server";
+import path from "path";
+import { buildSchema, UseMiddleware } from "type-graphql";
+import { createCreateManyMiddleware, createCreateSingleMiddleware } from "./middlewares/create";
+import { createFindManyMiddleware, createFindSingleMiddleware } from "./middlewares/find";
+import { LogTimeMiddleware } from "./middlewares/log-time";
 
 export interface Context {
   prisma: PrismaClient;
@@ -42,10 +41,10 @@ const createManyReadMiddlewares = <TModel extends Prisma.ModelName>(model: TMode
 const resolversEnhanceMap: ResolversEnhanceMap = {};
 for (const model of Object.values(Prisma.ModelName)) {
   resolversEnhanceMap[model] = {
-    _all: [UseMiddleware(LogAccessMiddleware)],
+    _all: [UseMiddleware(LogTimeMiddleware)],
     ...createManyReadMiddlewares(model),
     [`create${model}`]: [UseMiddleware(createCreateSingleMiddleware(model))],
-    [`createMany${model}`]: [UseMiddleware(createCreateSingleMiddleware(model))],
+    [`createMany${model}`]: [UseMiddleware(createCreateManyMiddleware(model))],
   };
 }
 
@@ -58,7 +57,7 @@ for (const model of Prisma.dmmf.datamodel.models) {
     }
     const findMiddleware = field.isList ? createFindManyMiddleware : createFindSingleMiddleware;
     relationResolversEnhanceMap[model.name][field.name] = [
-      UseMiddleware(LogAccessMiddleware, findMiddleware(field.type as Prisma.ModelName)),
+      UseMiddleware(LogTimeMiddleware, findMiddleware(field.type as Prisma.ModelName)),
     ];
   }
 }
@@ -86,7 +85,7 @@ async function main() {
   });
 
   const { port } = await server.listen(4000);
-  console.log(`GraphQL is listening on ${port}!`);
+  console.log(`GraphQL is listening on http://localhost:${port} !`);
 }
 
 main().catch(console.error);

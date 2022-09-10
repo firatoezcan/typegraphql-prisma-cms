@@ -23,7 +23,7 @@ import { Context } from "..";
 
 export type AppAbility = PrismaAbility<
   [
-    "read" | "create",
+    "read" | "create" | "insert",
     Subjects<{
       User: User;
       Location: Location;
@@ -66,7 +66,7 @@ export const createUserReadAbility = async (context: Context) => {
   }
 
   // Todo: Generate this in a smart way depending on the location of the models
-  can("read", "User");
+  can("read", "User", { id: { equals: user.id } });
   can("read", "Location", { userId: { equals: user.id } });
   can("read", "Profile", { userId: { equals: user.id } });
   can("read", "Work", { userId: { equals: user.id } });
@@ -114,19 +114,78 @@ export const createUserCreateAbility = async (context: Context) => {
   can("create", "User");
   // cannot("create", "User");
 
-  cannot("create", "Location", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
-  cannot("create", "Profile", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
-  cannot("create", "Work", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
-  cannot("create", "Volunteer", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
-  cannot("create", "Education", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
-  cannot("create", "Award", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
-  cannot("create", "Publication", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
-  cannot("create", "Skill", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
-  cannot("create", "Language", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
-  cannot("create", "Interest", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
-  cannot("create", "Reference", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
-  cannot("create", "Project", ["id", "userId"]).because(`Cannot manually insert "id" or "userId"`);
+  // Both syntaxes work
+  // can("create", "Work", { userId: user.id });
+  // Todo: Column permissions should be opt-in instead of opt-out
+  can("insert", "Work", ["**"]);
+  cannot("insert", "Work", ["highlights"]).because("Highlights is a premium only feature");
 
+  /**
+   * Create work when connected user
+   * has Frontend Skill Category OR
+   * some profile with linkedIn OR
+   * lives in Country DE AND has label Developer
+   */
+  can("create", "Work", {
+    user: {
+      is: {
+        OR: [
+          {
+            location: {
+              is: {
+                user: {
+                  is: {
+                    skills: {
+                      some: {
+                        category: { equals: "Frontend" },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          {
+            profiles: {
+              some: {
+                network: { equals: "LinkedIn" },
+              },
+            },
+          },
+          {
+            AND: [
+              {
+                location: {
+                  is: {
+                    countryCode: "DE",
+                    user: {
+                      isNot: {
+                        firstName: {
+                          equals: "Firat",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              { label: { contains: "Developer" } },
+            ],
+          },
+        ],
+      },
+    },
+  });
+  can("create", "Location", { userId: { equals: user.id } });
+  can("create", "Profile", { userId: { equals: user.id } });
+  can("create", "Volunteer", { userId: { equals: user.id } });
+  can("create", "Education", { userId: { equals: user.id } });
+  can("create", "Award", { userId: { equals: user.id } });
+  can("create", "Publication", { userId: { equals: user.id } });
+  can("create", "Skill", { userId: { equals: user.id } });
+  can("create", "Language", { userId: { equals: user.id } });
+  can("create", "Interest", { userId: { equals: user.id } });
+  can("create", "Reference", { userId: { equals: user.id } });
+  can("create", "Project", { userId: { equals: user.id } });
   const ability = build();
   createCache.set(userEmail, ability);
   return [user, ability] as const;
