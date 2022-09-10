@@ -62,13 +62,13 @@ const checkModelInput = async (
    * to set the userId for orders but have it set by us
    */
 
-  const modelRules = ability.possibleRulesFor("create", modelName as Prisma.ModelName)[0];
+  const modelRules = ability.possibleRulesFor("create", modelName as Prisma.ModelName);
 
   const getRelatedField = async (relation: Prisma.DMMF.Field, where: any) => {
     const fromField = relation?.relationFromFields?.[0] as string;
     const toField = relation?.relationToFields?.[0] as string;
 
-    const include = createInclude(modelRules.conditions, relation.name);
+    const include = createInclude(modelRules, relation.name);
     const relatedField = await prisma[relation.name].findUnique({
       where,
       ...(include && { include }),

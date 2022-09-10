@@ -120,72 +120,89 @@ export const createUserCreateAbility = async (context: Context) => {
   can("insert", "Work", ["**"]);
   cannot("insert", "Work", ["highlights"]).because("Highlights is a premium only feature");
 
-  can("create", "Work", { userId: user.id });
   /**
    * Create work when connected user
    * has Frontend Skill Category OR
    * some profile with linkedIn OR
    * lives in Country DE AND has label Developer
    */
-  // can("create", "Work", {
-  //   user: {
-  //     is: {
-  //       OR: [
-  //         {
-  //           location: {
-  //             is: {
-  //               user: {
-  //                 is: {
-  //                   skills: {
-  //                     some: {
-  //                       category: { equals: "Frontend" },
-  //                     },
-  //                   },
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //         {
-  //           profiles: {
-  //             some: {
-  //               network: { equals: "LinkedIn" },
-  //             },
-  //           },
-  //         },
-  //         {
-  //           AND: [
-  //             {
-  //               location: {
-  //                 is: {
-  //                   countryCode: "DE",
-  //                   user: {
-  //                     is: {
-  //                       firstName: {
-  //                         equals: "Firat",
-  //                       },
-  //                     },
-  //                   },
-  //                 },
-  //               },
-  //             },
-  //             { label: { contains: "Developer" } },
-  //           ],
-  //         },
-  //       ],
-  //     },
-  //   },
-  // });
+  can("create", "Work", {
+    user: {
+      is: {
+        AND: [
+          {
+            id: user.id,
+          },
+          {
+            OR: [
+              {
+                location: {
+                  is: {
+                    user: {
+                      is: {
+                        skills: {
+                          some: {
+                            category: { equals: "Frontend" },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              {
+                profiles: {
+                  some: {
+                    network: { equals: "LinkedIn" },
+                  },
+                },
+              },
+              {
+                AND: [
+                  {
+                    location: {
+                      is: {
+                        countryCode: "DE",
+                        user: {
+                          is: {
+                            firstName: {
+                              equals: "Firat",
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  { label: { contains: "Developer" } },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+  });
+  can("insert", "Location", ["**"]);
   can("create", "Location", { userId: { equals: user.id } });
+  can("insert", "Profile", ["**"]);
   can("create", "Profile", { userId: { equals: user.id } });
+  can("insert", "Volunteer", ["**"]);
   can("create", "Volunteer", { userId: { equals: user.id } });
+  can("insert", "Education", ["**"]);
   can("create", "Education", { userId: { equals: user.id } });
+  can("insert", "Award", ["**"]);
   can("create", "Award", { userId: { equals: user.id } });
+  can("insert", "Publication", ["**"]);
   can("create", "Publication", { userId: { equals: user.id } });
+  can("insert", "Skill", ["**"]);
   can("create", "Skill", { userId: { equals: user.id } });
+  can("insert", "Language", ["**"]);
   can("create", "Language", { userId: { equals: user.id } });
+  can("insert", "Interest", ["**"]);
   can("create", "Interest", { userId: { equals: user.id } });
+  can("insert", "Reference", ["**"]);
   can("create", "Reference", { userId: { equals: user.id } });
+  can("insert", "Project", ["**"]);
   can("create", "Project", { userId: { equals: user.id } });
   const ability = build();
   createCache.set(userEmail, ability);

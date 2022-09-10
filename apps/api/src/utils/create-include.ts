@@ -1,5 +1,6 @@
 // This goes through the defined CASL condition for the given model and creates an array shape so we can know what
 
+import { PrismaQuery } from "@casl/prisma";
 import _ from "lodash";
 import { AppAbility } from "./permissions";
 
@@ -20,48 +21,58 @@ const getRelationsFromCondition = (condition?: PrismaQuery, parent?: string) => 
 
     return res;
   });
-  const containsArray = ["OR", "AND"].includes(parent as string);
-  const result = [...models, ...allModels.flat(containsArray ? 2 : 1)].filter(Boolean);
+  const result = [...models, ...allModels].filter(Boolean);
   return result;
 };
 
-export const createInclude = (
+export const createSingleInclude = (
   rules: ReturnType<AppAbility["possibleRulesFor"]>[number]["conditions"],
   relation: string
 ) => {
   const modelsInPermission = getRelationsFromCondition(rules) as Result;
-  const startIndex = modelsInPermission.findIndex((entry) => entry === relation);
+  const startIndex = modelsInPermission.findIndex((entry) => entry[0] === relation);
   if (startIndex === -1) return undefined;
 
-  let shouldStop = false;
-  let endIndex = startIndex;
-  while (!shouldStop) {
-    endIndex++;
-    const next = modelsInPermission[endIndex];
-    // If this happens we reached the next include tree for another model or the end
-    if (typeof next === "string" || typeof next === "undefined") {
-      shouldStop = true;
-      continue;
+  const tree = modelsInPermission[startIndex];
+  const collapseArraysTraverse = (leaf: string | Result, parent?: any) => {
+    if (Array.isArray(leaf)) {
+      const res = leaf.map((l) => collapseArraysTraverse(l, typeof leaf[0] === "string" ? leaf[0] : parent));
+      return res;
     }
-  }
-  const permissionSlice = modelsInPermission.slice(startIndex + 1, endIndex);
-  const slicesWithInclude = permissionSlice.map((slice) => {
-    if (!Array.isArray(slice)) return undefined;
-    const include = slice.reverse().reduce((acc, cur) => {
-      if (typeof cur !== "string") {
-        debugger;
-        throw new Error("Open the debugger");
+    if (typeof leaf === "string") {
+      return leaf;
+    }
+  };
+  const simpleTree = collapseArraysTraverse(tree[1]);
+  const includeTraverse = (leaf: Array<any>, parent?: string) => {
+    if (leaf.length === 0) {
+      if (parent) {
+        const key = parent.split(".").join(".include.");
+        const value = _.get(include, key);
+        if (!value) {
+          _.set(include, key, true);
+        }
       }
-      return {
-        [cur]: Object.keys(acc).length > 0 ? { include: acc } : true,
-      };
-    }, {});
-    return include;
-  });
+      return;
+    }
+    if (leaf.length === 2) {
+      const newParent = leaf[0];
+      const dotParent = !parent ? newParent : `${parent}.${newParent}`;
+      if (typeof newParent === "string") {
+        const next = leaf[1];
+        includeTraverse(next, dotParent);
+        return;
+      }
+    }
+    if (Array.isArray(leaf)) {
+      leaf.map((l) => includeTraverse(l, parent));
+    }
+  };
+  const include: Record<string, any> = {};
+  includeTraverse(simpleTree);
+  return Object.keys(include).length > 0 ? include : undefined;
+};
 
-  const includeObj: Record<any, any> = {};
-  slicesWithInclude.forEach((slice) => {
-    _.defaultsDeep(includeObj, slice);
-  });
-  return includeObj;
+export const createInclude = (rules: ReturnType<AppAbility["possibleRulesFor"]>, relation: string) => {
+  return _.defaultsDeep({}, ...rules.map((rule) => createSingleInclude(rule.conditions, relation)).filter(Boolean));
 };
