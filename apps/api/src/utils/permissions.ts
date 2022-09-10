@@ -120,61 +120,62 @@ export const createUserCreateAbility = async (context: Context) => {
   can("insert", "Work", ["**"]);
   cannot("insert", "Work", ["highlights"]).because("Highlights is a premium only feature");
 
+  can("create", "Work", { userId: user.id });
   /**
    * Create work when connected user
    * has Frontend Skill Category OR
    * some profile with linkedIn OR
    * lives in Country DE AND has label Developer
    */
-  can("create", "Work", {
-    user: {
-      is: {
-        OR: [
-          {
-            location: {
-              is: {
-                user: {
-                  is: {
-                    skills: {
-                      some: {
-                        category: { equals: "Frontend" },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-          {
-            profiles: {
-              some: {
-                network: { equals: "LinkedIn" },
-              },
-            },
-          },
-          {
-            AND: [
-              {
-                location: {
-                  is: {
-                    countryCode: "DE",
-                    user: {
-                      isNot: {
-                        firstName: {
-                          equals: "Firat",
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-              { label: { contains: "Developer" } },
-            ],
-          },
-        ],
-      },
-    },
-  });
+  // can("create", "Work", {
+  //   user: {
+  //     is: {
+  //       OR: [
+  //         {
+  //           location: {
+  //             is: {
+  //               user: {
+  //                 is: {
+  //                   skills: {
+  //                     some: {
+  //                       category: { equals: "Frontend" },
+  //                     },
+  //                   },
+  //                 },
+  //               },
+  //             },
+  //           },
+  //         },
+  //         {
+  //           profiles: {
+  //             some: {
+  //               network: { equals: "LinkedIn" },
+  //             },
+  //           },
+  //         },
+  //         {
+  //           AND: [
+  //             {
+  //               location: {
+  //                 is: {
+  //                   countryCode: "DE",
+  //                   user: {
+  //                     is: {
+  //                       firstName: {
+  //                         equals: "Firat",
+  //                       },
+  //                     },
+  //                   },
+  //                 },
+  //               },
+  //             },
+  //             { label: { contains: "Developer" } },
+  //           ],
+  //         },
+  //       ],
+  //     },
+  //   },
+  // });
   can("create", "Location", { userId: { equals: user.id } });
   can("create", "Profile", { userId: { equals: user.id } });
   can("create", "Volunteer", { userId: { equals: user.id } });

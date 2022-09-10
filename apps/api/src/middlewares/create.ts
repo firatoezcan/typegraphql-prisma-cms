@@ -1,10 +1,9 @@
 import { subject } from "@casl/ability";
-import { PrismaQuery } from "@casl/prisma";
 import { Prisma } from "@prisma/client";
 import { NextFn, ResolverData } from "type-graphql";
 import { Context } from "..";
+import { createInclude } from "../utils/create-include";
 import { AppAbility, createUserCreateAbility } from "../utils/permissions";
-import _ from "lodash";
 
 type ActionType = "create" | "connect" | "createMany" | "connectOrCreate";
 
@@ -63,66 +62,21 @@ const checkModelInput = async (
    * to set the userId for orders but have it set by us
    */
 
-  // This goes through the defined CASL condition for the given model and creates an array shape so we can know what
-  // we need to join later when checking for permissions
-  type Result = Array<Result | string>;
-  const getRelationsFromCondition = (condition?: PrismaQuery, parent?: string) => {
-    if (!condition) return;
-    const models: string[] = [];
-    const allModels = Object.entries(condition).map(([key, value]) => {
-      if (value === null || typeof value !== "object") return undefined;
-      if (parent && ["is", "isNot", "every", "none", "some"].includes(key)) {
-        models.push(parent);
-      }
-      if (Array.isArray(value)) {
-        return value.map((v) => getRelationsFromCondition(v, key));
-      }
-      const res = getRelationsFromCondition(value, key);
-
-      return res;
-    });
-    const containsArray = ["OR", "AND"].includes(parent as string);
-    const result = [...models, ...allModels.flat(containsArray ? 2 : 1)].filter(Boolean);
-    return result;
-  };
   const modelRules = ability.possibleRulesFor("create", modelName as Prisma.ModelName)[0];
-  const modelsInPermission = getRelationsFromCondition(modelRules.conditions) as Result;
 
-  const createInclude = (relation: string) => {
-    const startIndex = modelsInPermission.findIndex((entry) => entry === relation);
-    if (startIndex === -1) return {};
+  const getRelatedField = async (relation: Prisma.DMMF.Field, where: any) => {
+    const fromField = relation?.relationFromFields?.[0] as string;
+    const toField = relation?.relationToFields?.[0] as string;
 
-    let shouldStop = false;
-    let endIndex = startIndex;
-    while (!shouldStop) {
-      endIndex++;
-      const next = modelsInPermission[endIndex];
-      // If this happens we reached the next include tree for another model or the end
-      if (typeof next === "string" || typeof next === "undefined") {
-        shouldStop = true;
-        continue;
-      }
-    }
-    const permissionSlice = modelsInPermission.slice(startIndex + 1, endIndex);
-    const slicesWithInclude = permissionSlice.map((slice) => {
-      if (!Array.isArray(slice)) return undefined;
-      const include = slice.reverse().reduce((acc, cur) => {
-        if (typeof cur !== "string") {
-          debugger;
-          throw new Error("Open the debugger");
-        }
-        return {
-          [cur]: Object.keys(acc).length > 0 ? { include: acc } : true,
-        };
-      }, {});
-      return include;
+    const include = createInclude(modelRules.conditions, relation.name);
+    const relatedField = await prisma[relation.name].findUnique({
+      where,
+      ...(include && { include }),
     });
-
-    const includeObj: Record<any, any> = {};
-    slicesWithInclude.forEach((slice) => {
-      _.defaultsDeep(includeObj, slice);
-    });
-    return includeObj;
+    return {
+      [relation.name]: relatedField,
+      [fromField]: relatedField[toField],
+    };
   };
 
   // Handles explicit relation ids for createMany resolvers
@@ -131,14 +85,7 @@ const checkModelInput = async (
       const fromField = relation?.relationFromFields?.[0] as string;
       const toField = relation?.relationToFields?.[0] as string;
       if (typeof data[fromField] === "undefined") return;
-      const relatedField = await prisma[relation.name].findUnique({
-        where: { [toField]: data[fromField] },
-        include: {
-          ...createInclude(relation.name),
-        },
-      });
-      entityToBeCreated[relation.name] = relatedField;
-      entityToBeCreated[fromField] = relatedField[toField];
+      Object.assign(entityToBeCreated, await getRelatedField(relation, { [toField]: data[fromField] }));
     })
   );
 
@@ -151,16 +98,7 @@ const checkModelInput = async (
       const action = Object.keys(relationInput)[0] as ActionType;
       // We only need to include data into the entity when it's a connect action
       if (action !== "connect") return;
-      const relatedField = await prisma[relation.name].findUnique({
-        where: relationInput[action],
-        include: {
-          ...createInclude(relation.name),
-        },
-      });
-      const fromField = relation?.relationFromFields?.[0] as string;
-      const toField = relation?.relationToFields?.[0] as string;
-      entityToBeCreated[relation.name] = relatedField;
-      entityToBeCreated[fromField] = relatedField[toField];
+      Object.assign(entityToBeCreated, await getRelatedField(relation, relationInput[action]));
     })
   );
 
@@ -170,7 +108,7 @@ const checkModelInput = async (
   if (!canCreateEntity) return [reason];
 
   // Todo: Type safety
-  const relationResults = await relationFields
+  const relationResults = relationFields
     .map((relation) => {
       const relationInput = data[relation.name];
       if (!relationInput) return null;
