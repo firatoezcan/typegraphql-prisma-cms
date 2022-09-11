@@ -85,8 +85,6 @@ export const createUserReadAbility = async (context: Context) => {
   return ability;
 };
 
-const createCache: Map<string, AppAbility> = new Map();
-
 export const createUserCreateAbility = async (context: Context) => {
   const { can, cannot, build } = new AbilityBuilder(AppAbility);
 
@@ -104,10 +102,6 @@ export const createUserCreateAbility = async (context: Context) => {
   const user = await prisma.user.findUnique({ where: { email: userEmail }, select: { id: true } });
   if (!user) {
     throw new Error(`Couldn't find user with email "${userEmail}"`);
-  }
-
-  if (createCache.has(userEmail)) {
-    return [user, createCache.get(userEmail) as AppAbility] as const;
   }
 
   // Only allow gmail.com emails
@@ -205,6 +199,5 @@ export const createUserCreateAbility = async (context: Context) => {
   can("insert", "Project", ["**"]);
   can("create", "Project", { userId: { equals: user.id } });
   const ability = build();
-  createCache.set(userEmail, ability);
   return [user, ability] as const;
 };
