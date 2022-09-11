@@ -14,7 +14,7 @@ import { ApolloServer } from "apollo-server";
 import path from "path";
 import { buildSchema, UseMiddleware } from "type-graphql";
 import { createCreateManyMiddleware, createCreateOneMiddleware } from "./middlewares/create";
-import { createFindManyMiddleware, createFindOneMiddleware } from "./middlewares/find";
+import { createFindManyMiddleware, createFindOneMiddleware } from "./middlewares/read";
 import { LogTimeMiddleware } from "./middlewares/log-time";
 import { createUpdateManyMiddleware, createUpdateOneMiddleware } from "./middlewares/update";
 import { createDeleteOneMiddleware, createDeleteManyMiddleware } from "./middlewares/delete";
