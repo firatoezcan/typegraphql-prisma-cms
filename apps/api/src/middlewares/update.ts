@@ -2,6 +2,7 @@ import { transformCountFieldIntoSelectRelationsCount, transformFields } from ".p
 import { accessibleBy } from "@casl/prisma";
 import { Prisma } from "@prisma/client";
 import graphqlFields from "graphql-fields";
+import _ from "lodash";
 import { NextFn, ResolverData } from "type-graphql";
 import { Context } from "..";
 import { createUserReadAbility } from "../utils/permissions";
@@ -18,7 +19,6 @@ export const createUpdateManyMiddleware = (model: Prisma.ModelName) => {
           AND: [args.where, userWhere],
         }
       : userWhere;
-    debugger;
 
     return next();
   };
@@ -33,29 +33,40 @@ export const createUpdateSingleMiddleware = (model: Prisma.ModelName) => {
     const userAbility = await createUserReadAbility(context);
     const userWhere = accessibleBy(userAbility)[model];
 
+    const originalArgs = _.cloneDeep(args);
     resolverData.args.where = args.where
       ? {
           AND: [args.where, userWhere],
         }
       : userWhere;
     const { _count } = transformFields(graphqlFields(resolverData.info));
-    /**
-     * Since update and updateMany have different signatures regarding relations some things dont work right now
-     * f.e. cannot set userId for profile or use connect in updateProfile
-     */
-    const { count } = await resolverData.context.prisma[model].updateMany({
-      ...resolverData.args,
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
-    });
 
-    if (count === 0) return null;
-
-    const result = await resolverData.context.prisma[model].findFirst({
-      where: args.where,
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
-    });
-
-    return result;
+    return resolverData.context.prisma.$transaction(
+      async (prisma) => {
+        const beforeUpdateEntry = await prisma[model].findFirst({
+          where: resolverData.args.where,
+        });
+        if (!beforeUpdateEntry) {
+          throw new Error(`Cannot update "${model}" with "${JSON.stringify(originalArgs.where)}"`);
+        }
+        const updatedEntry = await prisma[model].update({
+          ...originalArgs,
+          ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+        });
+        const afterUpdateEntry = await prisma[model].findFirst({
+          where: resolverData.args.where,
+        });
+        if (!afterUpdateEntry || beforeUpdateEntry.id !== afterUpdateEntry.id) {
+          throw new Error(`Cannot update "${model}" with "${JSON.stringify(originalArgs.where)}"`);
+        }
+        return updatedEntry;
+      },
+      {
+        // Setting isolation to Serializable because of a race condition
+        // https://github.com/prisma/prisma/issues/8612#issuecomment-1215739412
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+      }
+    );
   };
   Object.defineProperty(UpdateSingleMiddleware, "name", { value: `UpdateSingle${model}Middleware` });
   return UpdateSingleMiddleware;

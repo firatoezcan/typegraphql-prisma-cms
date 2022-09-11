@@ -347,7 +347,7 @@ input AwardUpdateInput {
   date: DateTimeFieldUpdateOperationsInput
   summary: StringFieldUpdateOperationsInput
   title: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutAwardsInput
+  user: UserUpdateOneWithoutAwardsNestedInput
 }
 
 input AwardUpdateManyMutationInput {
@@ -362,7 +362,7 @@ input AwardUpdateManyWithWhereWithoutUserInput {
   where: AwardScalarWhereInput!
 }
 
-input AwardUpdateManyWithoutUserInput {
+input AwardUpdateManyWithoutUserNestedInput {
   connect: [AwardWhereUniqueInput!]
   connectOrCreate: [AwardCreateOrConnectWithoutUserInput!]
   create: [AwardCreateWithoutUserInput!]
@@ -737,7 +737,7 @@ input EducationUpdateInput {
   startDate: DateTimeFieldUpdateOperationsInput
   studyType: StringFieldUpdateOperationsInput
   url: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutEducationInput
+  user: UserUpdateOneWithoutEducationNestedInput
 }
 
 input EducationUpdateManyMutationInput {
@@ -756,7 +756,7 @@ input EducationUpdateManyWithWhereWithoutUserInput {
   where: EducationScalarWhereInput!
 }
 
-input EducationUpdateManyWithoutUserInput {
+input EducationUpdateManyWithoutUserNestedInput {
   connect: [EducationWhereUniqueInput!]
   connectOrCreate: [EducationCreateOrConnectWithoutUserInput!]
   create: [EducationCreateWithoutUserInput!]
@@ -1029,7 +1029,7 @@ input InterestSumOrderByAggregateInput {
 input InterestUpdateInput {
   keywords: InterestUpdatekeywordsInput
   name: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutInterestsInput
+  user: UserUpdateOneWithoutInterestsNestedInput
 }
 
 input InterestUpdateManyMutationInput {
@@ -1042,7 +1042,7 @@ input InterestUpdateManyWithWhereWithoutUserInput {
   where: InterestScalarWhereInput!
 }
 
-input InterestUpdateManyWithoutUserInput {
+input InterestUpdateManyWithoutUserNestedInput {
   connect: [InterestWhereUniqueInput!]
   connectOrCreate: [InterestCreateOrConnectWithoutUserInput!]
   create: [InterestCreateWithoutUserInput!]
@@ -1276,7 +1276,7 @@ input LanguageSumOrderByAggregateInput {
 input LanguageUpdateInput {
   fluency: StringFieldUpdateOperationsInput
   name: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutLanguagesInput
+  user: UserUpdateOneWithoutLanguagesNestedInput
 }
 
 input LanguageUpdateManyMutationInput {
@@ -1289,7 +1289,7 @@ input LanguageUpdateManyWithWhereWithoutUserInput {
   where: LanguageScalarWhereInput!
 }
 
-input LanguageUpdateManyWithoutUserInput {
+input LanguageUpdateManyWithoutUserNestedInput {
   connect: [LanguageWhereUniqueInput!]
   connectOrCreate: [LanguageCreateOrConnectWithoutUserInput!]
   create: [LanguageCreateWithoutUserInput!]
@@ -1539,7 +1539,7 @@ input LocationUpdateInput {
   countryCode: StringFieldUpdateOperationsInput
   postalCode: StringFieldUpdateOperationsInput
   region: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutLocationInput
+  user: UserUpdateOneWithoutLocationNestedInput
 }
 
 input LocationUpdateManyMutationInput {
@@ -1550,7 +1550,7 @@ input LocationUpdateManyMutationInput {
   region: StringFieldUpdateOperationsInput
 }
 
-input LocationUpdateOneWithoutUserInput {
+input LocationUpdateOneWithoutUserNestedInput {
   connect: LocationWhereUniqueInput
   connectOrCreate: LocationCreateOrConnectWithoutUserInput
   create: LocationCreateWithoutUserInput
@@ -1593,11 +1593,6 @@ input LocationWhereUniqueInput {
 }
 
 type Mutation {
-  createAward(data: AwardCreateInput!): Award!
-  createEducation(data: EducationCreateInput!): Education!
-  createInterest(data: InterestCreateInput!): Interest!
-  createLanguage(data: LanguageCreateInput!): Language!
-  createLocation(data: LocationCreateInput!): Location!
   createManyAward(data: [AwardCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyEducation(data: [EducationCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyInterest(data: [InterestCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
@@ -1613,21 +1608,21 @@ type Mutation {
   createManyUser(data: [UserCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyVolunteer(data: [VolunteerCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyWork(data: [WorkCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
-  createNestedProjectLevel1(data: NestedProjectLevel1CreateInput!): NestedProjectLevel1!
-  createNestedProjectLevel2(data: NestedProjectLevel2CreateInput!): NestedProjectLevel2!
-  createProfile(data: ProfileCreateInput!): Profile!
-  createProject(data: ProjectCreateInput!): Project!
-  createPublication(data: PublicationCreateInput!): Publication!
-  createReference(data: ReferenceCreateInput!): Reference!
-  createSkill(data: SkillCreateInput!): Skill!
-  createUser(data: UserCreateInput!): User!
-  createVolunteer(data: VolunteerCreateInput!): Volunteer!
-  createWork(data: WorkCreateInput!): Work!
-  deleteAward(where: AwardWhereUniqueInput!): Award
-  deleteEducation(where: EducationWhereUniqueInput!): Education
-  deleteInterest(where: InterestWhereUniqueInput!): Interest
-  deleteLanguage(where: LanguageWhereUniqueInput!): Language
-  deleteLocation(where: LocationWhereUniqueInput!): Location
+  createOneAward(data: AwardCreateInput!): Award!
+  createOneEducation(data: EducationCreateInput!): Education!
+  createOneInterest(data: InterestCreateInput!): Interest!
+  createOneLanguage(data: LanguageCreateInput!): Language!
+  createOneLocation(data: LocationCreateInput!): Location!
+  createOneNestedProjectLevel1(data: NestedProjectLevel1CreateInput!): NestedProjectLevel1!
+  createOneNestedProjectLevel2(data: NestedProjectLevel2CreateInput!): NestedProjectLevel2!
+  createOneProfile(data: ProfileCreateInput!): Profile!
+  createOneProject(data: ProjectCreateInput!): Project!
+  createOnePublication(data: PublicationCreateInput!): Publication!
+  createOneReference(data: ReferenceCreateInput!): Reference!
+  createOneSkill(data: SkillCreateInput!): Skill!
+  createOneUser(data: UserCreateInput!): User!
+  createOneVolunteer(data: VolunteerCreateInput!): Volunteer!
+  createOneWork(data: WorkCreateInput!): Work!
   deleteManyAward(where: AwardWhereInput): AffectedRowsOutput!
   deleteManyEducation(where: EducationWhereInput): AffectedRowsOutput!
   deleteManyInterest(where: InterestWhereInput): AffectedRowsOutput!
@@ -1643,21 +1638,21 @@ type Mutation {
   deleteManyUser(where: UserWhereInput): AffectedRowsOutput!
   deleteManyVolunteer(where: VolunteerWhereInput): AffectedRowsOutput!
   deleteManyWork(where: WorkWhereInput): AffectedRowsOutput!
-  deleteNestedProjectLevel1(where: NestedProjectLevel1WhereUniqueInput!): NestedProjectLevel1
-  deleteNestedProjectLevel2(where: NestedProjectLevel2WhereUniqueInput!): NestedProjectLevel2
-  deleteProfile(where: ProfileWhereUniqueInput!): Profile
-  deleteProject(where: ProjectWhereUniqueInput!): Project
-  deletePublication(where: PublicationWhereUniqueInput!): Publication
-  deleteReference(where: ReferenceWhereUniqueInput!): Reference
-  deleteSkill(where: SkillWhereUniqueInput!): Skill
-  deleteUser(where: UserWhereUniqueInput!): User
-  deleteVolunteer(where: VolunteerWhereUniqueInput!): Volunteer
-  deleteWork(where: WorkWhereUniqueInput!): Work
-  updateAward(data: AwardUpdateInput!, where: AwardWhereUniqueInput!): Award
-  updateEducation(data: EducationUpdateInput!, where: EducationWhereUniqueInput!): Education
-  updateInterest(data: InterestUpdateInput!, where: InterestWhereUniqueInput!): Interest
-  updateLanguage(data: LanguageUpdateInput!, where: LanguageWhereUniqueInput!): Language
-  updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
+  deleteOneAward(where: AwardWhereUniqueInput!): Award
+  deleteOneEducation(where: EducationWhereUniqueInput!): Education
+  deleteOneInterest(where: InterestWhereUniqueInput!): Interest
+  deleteOneLanguage(where: LanguageWhereUniqueInput!): Language
+  deleteOneLocation(where: LocationWhereUniqueInput!): Location
+  deleteOneNestedProjectLevel1(where: NestedProjectLevel1WhereUniqueInput!): NestedProjectLevel1
+  deleteOneNestedProjectLevel2(where: NestedProjectLevel2WhereUniqueInput!): NestedProjectLevel2
+  deleteOneProfile(where: ProfileWhereUniqueInput!): Profile
+  deleteOneProject(where: ProjectWhereUniqueInput!): Project
+  deleteOnePublication(where: PublicationWhereUniqueInput!): Publication
+  deleteOneReference(where: ReferenceWhereUniqueInput!): Reference
+  deleteOneSkill(where: SkillWhereUniqueInput!): Skill
+  deleteOneUser(where: UserWhereUniqueInput!): User
+  deleteOneVolunteer(where: VolunteerWhereUniqueInput!): Volunteer
+  deleteOneWork(where: WorkWhereUniqueInput!): Work
   updateManyAward(data: AwardUpdateManyMutationInput!, where: AwardWhereInput): AffectedRowsOutput!
   updateManyEducation(data: EducationUpdateManyMutationInput!, where: EducationWhereInput): AffectedRowsOutput!
   updateManyInterest(data: InterestUpdateManyMutationInput!, where: InterestWhereInput): AffectedRowsOutput!
@@ -1673,31 +1668,36 @@ type Mutation {
   updateManyUser(data: UserUpdateManyMutationInput!, where: UserWhereInput): AffectedRowsOutput!
   updateManyVolunteer(data: VolunteerUpdateManyMutationInput!, where: VolunteerWhereInput): AffectedRowsOutput!
   updateManyWork(data: WorkUpdateManyMutationInput!, where: WorkWhereInput): AffectedRowsOutput!
-  updateNestedProjectLevel1(data: NestedProjectLevel1UpdateInput!, where: NestedProjectLevel1WhereUniqueInput!): NestedProjectLevel1
-  updateNestedProjectLevel2(data: NestedProjectLevel2UpdateInput!, where: NestedProjectLevel2WhereUniqueInput!): NestedProjectLevel2
-  updateProfile(data: ProfileUpdateInput!, where: ProfileWhereUniqueInput!): Profile
-  updateProject(data: ProjectUpdateInput!, where: ProjectWhereUniqueInput!): Project
-  updatePublication(data: PublicationUpdateInput!, where: PublicationWhereUniqueInput!): Publication
-  updateReference(data: ReferenceUpdateInput!, where: ReferenceWhereUniqueInput!): Reference
-  updateSkill(data: SkillUpdateInput!, where: SkillWhereUniqueInput!): Skill
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
-  updateVolunteer(data: VolunteerUpdateInput!, where: VolunteerWhereUniqueInput!): Volunteer
-  updateWork(data: WorkUpdateInput!, where: WorkWhereUniqueInput!): Work
-  upsertAward(create: AwardCreateInput!, update: AwardUpdateInput!, where: AwardWhereUniqueInput!): Award!
-  upsertEducation(create: EducationCreateInput!, update: EducationUpdateInput!, where: EducationWhereUniqueInput!): Education!
-  upsertInterest(create: InterestCreateInput!, update: InterestUpdateInput!, where: InterestWhereUniqueInput!): Interest!
-  upsertLanguage(create: LanguageCreateInput!, update: LanguageUpdateInput!, where: LanguageWhereUniqueInput!): Language!
-  upsertLocation(create: LocationCreateInput!, update: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location!
-  upsertNestedProjectLevel1(create: NestedProjectLevel1CreateInput!, update: NestedProjectLevel1UpdateInput!, where: NestedProjectLevel1WhereUniqueInput!): NestedProjectLevel1!
-  upsertNestedProjectLevel2(create: NestedProjectLevel2CreateInput!, update: NestedProjectLevel2UpdateInput!, where: NestedProjectLevel2WhereUniqueInput!): NestedProjectLevel2!
-  upsertProfile(create: ProfileCreateInput!, update: ProfileUpdateInput!, where: ProfileWhereUniqueInput!): Profile!
-  upsertProject(create: ProjectCreateInput!, update: ProjectUpdateInput!, where: ProjectWhereUniqueInput!): Project!
-  upsertPublication(create: PublicationCreateInput!, update: PublicationUpdateInput!, where: PublicationWhereUniqueInput!): Publication!
-  upsertReference(create: ReferenceCreateInput!, update: ReferenceUpdateInput!, where: ReferenceWhereUniqueInput!): Reference!
-  upsertSkill(create: SkillCreateInput!, update: SkillUpdateInput!, where: SkillWhereUniqueInput!): Skill!
-  upsertUser(create: UserCreateInput!, update: UserUpdateInput!, where: UserWhereUniqueInput!): User!
-  upsertVolunteer(create: VolunteerCreateInput!, update: VolunteerUpdateInput!, where: VolunteerWhereUniqueInput!): Volunteer!
-  upsertWork(create: WorkCreateInput!, update: WorkUpdateInput!, where: WorkWhereUniqueInput!): Work!
+  updateOneAward(data: AwardUpdateInput!, where: AwardWhereUniqueInput!): Award
+  updateOneEducation(data: EducationUpdateInput!, where: EducationWhereUniqueInput!): Education
+  updateOneInterest(data: InterestUpdateInput!, where: InterestWhereUniqueInput!): Interest
+  updateOneLanguage(data: LanguageUpdateInput!, where: LanguageWhereUniqueInput!): Language
+  updateOneLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
+  updateOneNestedProjectLevel1(data: NestedProjectLevel1UpdateInput!, where: NestedProjectLevel1WhereUniqueInput!): NestedProjectLevel1
+  updateOneNestedProjectLevel2(data: NestedProjectLevel2UpdateInput!, where: NestedProjectLevel2WhereUniqueInput!): NestedProjectLevel2
+  updateOneProfile(data: ProfileUpdateInput!, where: ProfileWhereUniqueInput!): Profile
+  updateOneProject(data: ProjectUpdateInput!, where: ProjectWhereUniqueInput!): Project
+  updateOnePublication(data: PublicationUpdateInput!, where: PublicationWhereUniqueInput!): Publication
+  updateOneReference(data: ReferenceUpdateInput!, where: ReferenceWhereUniqueInput!): Reference
+  updateOneSkill(data: SkillUpdateInput!, where: SkillWhereUniqueInput!): Skill
+  updateOneUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateOneVolunteer(data: VolunteerUpdateInput!, where: VolunteerWhereUniqueInput!): Volunteer
+  updateOneWork(data: WorkUpdateInput!, where: WorkWhereUniqueInput!): Work
+  upsertOneAward(create: AwardCreateInput!, update: AwardUpdateInput!, where: AwardWhereUniqueInput!): Award!
+  upsertOneEducation(create: EducationCreateInput!, update: EducationUpdateInput!, where: EducationWhereUniqueInput!): Education!
+  upsertOneInterest(create: InterestCreateInput!, update: InterestUpdateInput!, where: InterestWhereUniqueInput!): Interest!
+  upsertOneLanguage(create: LanguageCreateInput!, update: LanguageUpdateInput!, where: LanguageWhereUniqueInput!): Language!
+  upsertOneLocation(create: LocationCreateInput!, update: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location!
+  upsertOneNestedProjectLevel1(create: NestedProjectLevel1CreateInput!, update: NestedProjectLevel1UpdateInput!, where: NestedProjectLevel1WhereUniqueInput!): NestedProjectLevel1!
+  upsertOneNestedProjectLevel2(create: NestedProjectLevel2CreateInput!, update: NestedProjectLevel2UpdateInput!, where: NestedProjectLevel2WhereUniqueInput!): NestedProjectLevel2!
+  upsertOneProfile(create: ProfileCreateInput!, update: ProfileUpdateInput!, where: ProfileWhereUniqueInput!): Profile!
+  upsertOneProject(create: ProjectCreateInput!, update: ProjectUpdateInput!, where: ProjectWhereUniqueInput!): Project!
+  upsertOnePublication(create: PublicationCreateInput!, update: PublicationUpdateInput!, where: PublicationWhereUniqueInput!): Publication!
+  upsertOneReference(create: ReferenceCreateInput!, update: ReferenceUpdateInput!, where: ReferenceWhereUniqueInput!): Reference!
+  upsertOneSkill(create: SkillCreateInput!, update: SkillUpdateInput!, where: SkillWhereUniqueInput!): Skill!
+  upsertOneUser(create: UserCreateInput!, update: UserUpdateInput!, where: UserWhereUniqueInput!): User!
+  upsertOneVolunteer(create: VolunteerCreateInput!, update: VolunteerUpdateInput!, where: VolunteerWhereUniqueInput!): Volunteer!
+  upsertOneWork(create: WorkCreateInput!, update: WorkUpdateInput!, where: WorkWhereUniqueInput!): Work!
 }
 
 input NestedDateTimeFilter {
@@ -1958,9 +1958,9 @@ input NestedProjectLevel1SumOrderByAggregateInput {
 }
 
 input NestedProjectLevel1UpdateInput {
-  level2: NestedProjectLevel2UpdateManyWithoutProjectInput
+  level2: NestedProjectLevel2UpdateManyWithoutProjectNestedInput
   name: StringFieldUpdateOperationsInput
-  project: ProjectUpdateOneWithoutNestedLevel1Input
+  project: ProjectUpdateOneWithoutNestedLevel1NestedInput
 }
 
 input NestedProjectLevel1UpdateManyMutationInput {
@@ -1972,7 +1972,7 @@ input NestedProjectLevel1UpdateManyWithWhereWithoutProjectInput {
   where: NestedProjectLevel1ScalarWhereInput!
 }
 
-input NestedProjectLevel1UpdateManyWithoutProjectInput {
+input NestedProjectLevel1UpdateManyWithoutProjectNestedInput {
   connect: [NestedProjectLevel1WhereUniqueInput!]
   connectOrCreate: [NestedProjectLevel1CreateOrConnectWithoutProjectInput!]
   create: [NestedProjectLevel1CreateWithoutProjectInput!]
@@ -1986,7 +1986,7 @@ input NestedProjectLevel1UpdateManyWithoutProjectInput {
   upsert: [NestedProjectLevel1UpsertWithWhereUniqueWithoutProjectInput!]
 }
 
-input NestedProjectLevel1UpdateOneWithoutLevel2Input {
+input NestedProjectLevel1UpdateOneWithoutLevel2NestedInput {
   connect: NestedProjectLevel1WhereUniqueInput
   connectOrCreate: NestedProjectLevel1CreateOrConnectWithoutLevel2Input
   create: NestedProjectLevel1CreateWithoutLevel2Input
@@ -2003,11 +2003,11 @@ input NestedProjectLevel1UpdateWithWhereUniqueWithoutProjectInput {
 
 input NestedProjectLevel1UpdateWithoutLevel2Input {
   name: StringFieldUpdateOperationsInput
-  project: ProjectUpdateOneWithoutNestedLevel1Input
+  project: ProjectUpdateOneWithoutNestedLevel1NestedInput
 }
 
 input NestedProjectLevel1UpdateWithoutProjectInput {
-  level2: NestedProjectLevel2UpdateManyWithoutProjectInput
+  level2: NestedProjectLevel2UpdateManyWithoutProjectNestedInput
   name: StringFieldUpdateOperationsInput
 }
 
@@ -2203,7 +2203,7 @@ input NestedProjectLevel2SumOrderByAggregateInput {
 
 input NestedProjectLevel2UpdateInput {
   name: StringFieldUpdateOperationsInput
-  project: NestedProjectLevel1UpdateOneWithoutLevel2Input
+  project: NestedProjectLevel1UpdateOneWithoutLevel2NestedInput
 }
 
 input NestedProjectLevel2UpdateManyMutationInput {
@@ -2215,7 +2215,7 @@ input NestedProjectLevel2UpdateManyWithWhereWithoutProjectInput {
   where: NestedProjectLevel2ScalarWhereInput!
 }
 
-input NestedProjectLevel2UpdateManyWithoutProjectInput {
+input NestedProjectLevel2UpdateManyWithoutProjectNestedInput {
   connect: [NestedProjectLevel2WhereUniqueInput!]
   connectOrCreate: [NestedProjectLevel2CreateOrConnectWithoutProjectInput!]
   create: [NestedProjectLevel2CreateWithoutProjectInput!]
@@ -2490,7 +2490,7 @@ input ProfileSumOrderByAggregateInput {
 input ProfileUpdateInput {
   network: StringFieldUpdateOperationsInput
   url: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutProfilesInput
+  user: UserUpdateOneWithoutProfilesNestedInput
   username: StringFieldUpdateOperationsInput
 }
 
@@ -2505,7 +2505,7 @@ input ProfileUpdateManyWithWhereWithoutUserInput {
   where: ProfileScalarWhereInput!
 }
 
-input ProfileUpdateManyWithoutUserInput {
+input ProfileUpdateManyWithoutUserNestedInput {
   connect: [ProfileWhereUniqueInput!]
   connectOrCreate: [ProfileCreateOrConnectWithoutUserInput!]
   create: [ProfileCreateWithoutUserInput!]
@@ -2915,12 +2915,12 @@ input ProjectUpdateInput {
   highlights: ProjectUpdatehighlightsInput
   keywords: ProjectUpdatekeywordsInput
   name: StringFieldUpdateOperationsInput
-  nestedLevel1: NestedProjectLevel1UpdateManyWithoutProjectInput
+  nestedLevel1: NestedProjectLevel1UpdateManyWithoutProjectNestedInput
   roles: ProjectUpdaterolesInput
   startDate: DateTimeFieldUpdateOperationsInput
   type: StringFieldUpdateOperationsInput
   url: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutProjectsInput
+  user: UserUpdateOneWithoutProjectsNestedInput
 }
 
 input ProjectUpdateManyMutationInput {
@@ -2941,7 +2941,7 @@ input ProjectUpdateManyWithWhereWithoutUserInput {
   where: ProjectScalarWhereInput!
 }
 
-input ProjectUpdateManyWithoutUserInput {
+input ProjectUpdateManyWithoutUserNestedInput {
   connect: [ProjectWhereUniqueInput!]
   connectOrCreate: [ProjectCreateOrConnectWithoutUserInput!]
   create: [ProjectCreateWithoutUserInput!]
@@ -2955,7 +2955,7 @@ input ProjectUpdateManyWithoutUserInput {
   upsert: [ProjectUpsertWithWhereUniqueWithoutUserInput!]
 }
 
-input ProjectUpdateOneWithoutNestedLevel1Input {
+input ProjectUpdateOneWithoutNestedLevel1NestedInput {
   connect: ProjectWhereUniqueInput
   connectOrCreate: ProjectCreateOrConnectWithoutNestedLevel1Input
   create: ProjectCreateWithoutNestedLevel1Input
@@ -2981,7 +2981,7 @@ input ProjectUpdateWithoutNestedLevel1Input {
   startDate: DateTimeFieldUpdateOperationsInput
   type: StringFieldUpdateOperationsInput
   url: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutProjectsInput
+  user: UserUpdateOneWithoutProjectsNestedInput
 }
 
 input ProjectUpdateWithoutUserInput {
@@ -2991,7 +2991,7 @@ input ProjectUpdateWithoutUserInput {
   highlights: ProjectUpdatehighlightsInput
   keywords: ProjectUpdatekeywordsInput
   name: StringFieldUpdateOperationsInput
-  nestedLevel1: NestedProjectLevel1UpdateManyWithoutProjectInput
+  nestedLevel1: NestedProjectLevel1UpdateManyWithoutProjectNestedInput
   roles: ProjectUpdaterolesInput
   startDate: DateTimeFieldUpdateOperationsInput
   type: StringFieldUpdateOperationsInput
@@ -3286,7 +3286,7 @@ input PublicationUpdateInput {
   releaseDate: DateTimeFieldUpdateOperationsInput
   summary: StringFieldUpdateOperationsInput
   url: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutPublicationsInput
+  user: UserUpdateOneWithoutPublicationsNestedInput
 }
 
 input PublicationUpdateManyMutationInput {
@@ -3302,7 +3302,7 @@ input PublicationUpdateManyWithWhereWithoutUserInput {
   where: PublicationScalarWhereInput!
 }
 
-input PublicationUpdateManyWithoutUserInput {
+input PublicationUpdateManyWithoutUserNestedInput {
   connect: [PublicationWhereUniqueInput!]
   connectOrCreate: [PublicationCreateOrConnectWithoutUserInput!]
   create: [PublicationCreateWithoutUserInput!]
@@ -3620,7 +3620,7 @@ input ReferenceSumOrderByAggregateInput {
 input ReferenceUpdateInput {
   name: StringFieldUpdateOperationsInput
   reference: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutReferencesInput
+  user: UserUpdateOneWithoutReferencesNestedInput
 }
 
 input ReferenceUpdateManyMutationInput {
@@ -3633,7 +3633,7 @@ input ReferenceUpdateManyWithWhereWithoutUserInput {
   where: ReferenceScalarWhereInput!
 }
 
-input ReferenceUpdateManyWithoutUserInput {
+input ReferenceUpdateManyWithoutUserNestedInput {
   connect: [ReferenceWhereUniqueInput!]
   connectOrCreate: [ReferenceCreateOrConnectWithoutUserInput!]
   create: [ReferenceCreateWithoutUserInput!]
@@ -3880,7 +3880,7 @@ input SkillUpdateInput {
   category: StringFieldUpdateOperationsInput
   keywords: SkillUpdatekeywordsInput
   level: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutSkillsInput
+  user: UserUpdateOneWithoutSkillsNestedInput
 }
 
 input SkillUpdateManyMutationInput {
@@ -3894,7 +3894,7 @@ input SkillUpdateManyWithWhereWithoutUserInput {
   where: SkillScalarWhereInput!
 }
 
-input SkillUpdateManyWithoutUserInput {
+input SkillUpdateManyWithoutUserNestedInput {
   connect: [SkillWhereUniqueInput!]
   connectOrCreate: [SkillCreateOrConnectWithoutUserInput!]
   create: [SkillCreateWithoutUserInput!]
@@ -4620,25 +4620,25 @@ input UserSumOrderByAggregateInput {
 }
 
 input UserUpdateInput {
-  awards: AwardUpdateManyWithoutUserInput
-  education: EducationUpdateManyWithoutUserInput
+  awards: AwardUpdateManyWithoutUserNestedInput
+  education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
-  interests: InterestUpdateManyWithoutUserInput
+  interests: InterestUpdateManyWithoutUserNestedInput
   label: StringFieldUpdateOperationsInput
-  languages: LanguageUpdateManyWithoutUserInput
+  languages: LanguageUpdateManyWithoutUserNestedInput
   lastName: StringFieldUpdateOperationsInput
-  location: LocationUpdateOneWithoutUserInput
+  location: LocationUpdateOneWithoutUserNestedInput
   phone: StringFieldUpdateOperationsInput
-  profiles: ProfileUpdateManyWithoutUserInput
-  projects: ProjectUpdateManyWithoutUserInput
-  publications: PublicationUpdateManyWithoutUserInput
-  references: ReferenceUpdateManyWithoutUserInput
-  skills: SkillUpdateManyWithoutUserInput
+  profiles: ProfileUpdateManyWithoutUserNestedInput
+  projects: ProjectUpdateManyWithoutUserNestedInput
+  publications: PublicationUpdateManyWithoutUserNestedInput
+  references: ReferenceUpdateManyWithoutUserNestedInput
+  skills: SkillUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
-  volunteer: VolunteerUpdateManyWithoutUserInput
-  work: WorkUpdateManyWithoutUserInput
+  volunteer: VolunteerUpdateManyWithoutUserNestedInput
+  work: WorkUpdateManyWithoutUserNestedInput
 }
 
 input UserUpdateManyMutationInput {
@@ -4651,7 +4651,7 @@ input UserUpdateManyMutationInput {
   summary: StringFieldUpdateOperationsInput
 }
 
-input UserUpdateOneWithoutAwardsInput {
+input UserUpdateOneWithoutAwardsNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutAwardsInput
   create: UserCreateWithoutAwardsInput
@@ -4661,7 +4661,7 @@ input UserUpdateOneWithoutAwardsInput {
   upsert: UserUpsertWithoutAwardsInput
 }
 
-input UserUpdateOneWithoutEducationInput {
+input UserUpdateOneWithoutEducationNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutEducationInput
   create: UserCreateWithoutEducationInput
@@ -4671,7 +4671,7 @@ input UserUpdateOneWithoutEducationInput {
   upsert: UserUpsertWithoutEducationInput
 }
 
-input UserUpdateOneWithoutInterestsInput {
+input UserUpdateOneWithoutInterestsNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutInterestsInput
   create: UserCreateWithoutInterestsInput
@@ -4681,7 +4681,7 @@ input UserUpdateOneWithoutInterestsInput {
   upsert: UserUpsertWithoutInterestsInput
 }
 
-input UserUpdateOneWithoutLanguagesInput {
+input UserUpdateOneWithoutLanguagesNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutLanguagesInput
   create: UserCreateWithoutLanguagesInput
@@ -4691,7 +4691,7 @@ input UserUpdateOneWithoutLanguagesInput {
   upsert: UserUpsertWithoutLanguagesInput
 }
 
-input UserUpdateOneWithoutLocationInput {
+input UserUpdateOneWithoutLocationNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutLocationInput
   create: UserCreateWithoutLocationInput
@@ -4701,7 +4701,7 @@ input UserUpdateOneWithoutLocationInput {
   upsert: UserUpsertWithoutLocationInput
 }
 
-input UserUpdateOneWithoutProfilesInput {
+input UserUpdateOneWithoutProfilesNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutProfilesInput
   create: UserCreateWithoutProfilesInput
@@ -4711,7 +4711,7 @@ input UserUpdateOneWithoutProfilesInput {
   upsert: UserUpsertWithoutProfilesInput
 }
 
-input UserUpdateOneWithoutProjectsInput {
+input UserUpdateOneWithoutProjectsNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutProjectsInput
   create: UserCreateWithoutProjectsInput
@@ -4721,7 +4721,7 @@ input UserUpdateOneWithoutProjectsInput {
   upsert: UserUpsertWithoutProjectsInput
 }
 
-input UserUpdateOneWithoutPublicationsInput {
+input UserUpdateOneWithoutPublicationsNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutPublicationsInput
   create: UserCreateWithoutPublicationsInput
@@ -4731,7 +4731,7 @@ input UserUpdateOneWithoutPublicationsInput {
   upsert: UserUpsertWithoutPublicationsInput
 }
 
-input UserUpdateOneWithoutReferencesInput {
+input UserUpdateOneWithoutReferencesNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutReferencesInput
   create: UserCreateWithoutReferencesInput
@@ -4741,7 +4741,7 @@ input UserUpdateOneWithoutReferencesInput {
   upsert: UserUpsertWithoutReferencesInput
 }
 
-input UserUpdateOneWithoutSkillsInput {
+input UserUpdateOneWithoutSkillsNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutSkillsInput
   create: UserCreateWithoutSkillsInput
@@ -4751,7 +4751,7 @@ input UserUpdateOneWithoutSkillsInput {
   upsert: UserUpsertWithoutSkillsInput
 }
 
-input UserUpdateOneWithoutVolunteerInput {
+input UserUpdateOneWithoutVolunteerNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutVolunteerInput
   create: UserCreateWithoutVolunteerInput
@@ -4761,7 +4761,7 @@ input UserUpdateOneWithoutVolunteerInput {
   upsert: UserUpsertWithoutVolunteerInput
 }
 
-input UserUpdateOneWithoutWorkInput {
+input UserUpdateOneWithoutWorkNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutWorkInput
   create: UserCreateWithoutWorkInput
@@ -4772,255 +4772,255 @@ input UserUpdateOneWithoutWorkInput {
 }
 
 input UserUpdateWithoutAwardsInput {
-  education: EducationUpdateManyWithoutUserInput
+  education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
-  interests: InterestUpdateManyWithoutUserInput
+  interests: InterestUpdateManyWithoutUserNestedInput
   label: StringFieldUpdateOperationsInput
-  languages: LanguageUpdateManyWithoutUserInput
+  languages: LanguageUpdateManyWithoutUserNestedInput
   lastName: StringFieldUpdateOperationsInput
-  location: LocationUpdateOneWithoutUserInput
+  location: LocationUpdateOneWithoutUserNestedInput
   phone: StringFieldUpdateOperationsInput
-  profiles: ProfileUpdateManyWithoutUserInput
-  projects: ProjectUpdateManyWithoutUserInput
-  publications: PublicationUpdateManyWithoutUserInput
-  references: ReferenceUpdateManyWithoutUserInput
-  skills: SkillUpdateManyWithoutUserInput
+  profiles: ProfileUpdateManyWithoutUserNestedInput
+  projects: ProjectUpdateManyWithoutUserNestedInput
+  publications: PublicationUpdateManyWithoutUserNestedInput
+  references: ReferenceUpdateManyWithoutUserNestedInput
+  skills: SkillUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
-  volunteer: VolunteerUpdateManyWithoutUserInput
-  work: WorkUpdateManyWithoutUserInput
+  volunteer: VolunteerUpdateManyWithoutUserNestedInput
+  work: WorkUpdateManyWithoutUserNestedInput
 }
 
 input UserUpdateWithoutEducationInput {
-  awards: AwardUpdateManyWithoutUserInput
+  awards: AwardUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
-  interests: InterestUpdateManyWithoutUserInput
+  interests: InterestUpdateManyWithoutUserNestedInput
   label: StringFieldUpdateOperationsInput
-  languages: LanguageUpdateManyWithoutUserInput
+  languages: LanguageUpdateManyWithoutUserNestedInput
   lastName: StringFieldUpdateOperationsInput
-  location: LocationUpdateOneWithoutUserInput
+  location: LocationUpdateOneWithoutUserNestedInput
   phone: StringFieldUpdateOperationsInput
-  profiles: ProfileUpdateManyWithoutUserInput
-  projects: ProjectUpdateManyWithoutUserInput
-  publications: PublicationUpdateManyWithoutUserInput
-  references: ReferenceUpdateManyWithoutUserInput
-  skills: SkillUpdateManyWithoutUserInput
+  profiles: ProfileUpdateManyWithoutUserNestedInput
+  projects: ProjectUpdateManyWithoutUserNestedInput
+  publications: PublicationUpdateManyWithoutUserNestedInput
+  references: ReferenceUpdateManyWithoutUserNestedInput
+  skills: SkillUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
-  volunteer: VolunteerUpdateManyWithoutUserInput
-  work: WorkUpdateManyWithoutUserInput
+  volunteer: VolunteerUpdateManyWithoutUserNestedInput
+  work: WorkUpdateManyWithoutUserNestedInput
 }
 
 input UserUpdateWithoutInterestsInput {
-  awards: AwardUpdateManyWithoutUserInput
-  education: EducationUpdateManyWithoutUserInput
+  awards: AwardUpdateManyWithoutUserNestedInput
+  education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
   label: StringFieldUpdateOperationsInput
-  languages: LanguageUpdateManyWithoutUserInput
+  languages: LanguageUpdateManyWithoutUserNestedInput
   lastName: StringFieldUpdateOperationsInput
-  location: LocationUpdateOneWithoutUserInput
+  location: LocationUpdateOneWithoutUserNestedInput
   phone: StringFieldUpdateOperationsInput
-  profiles: ProfileUpdateManyWithoutUserInput
-  projects: ProjectUpdateManyWithoutUserInput
-  publications: PublicationUpdateManyWithoutUserInput
-  references: ReferenceUpdateManyWithoutUserInput
-  skills: SkillUpdateManyWithoutUserInput
+  profiles: ProfileUpdateManyWithoutUserNestedInput
+  projects: ProjectUpdateManyWithoutUserNestedInput
+  publications: PublicationUpdateManyWithoutUserNestedInput
+  references: ReferenceUpdateManyWithoutUserNestedInput
+  skills: SkillUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
-  volunteer: VolunteerUpdateManyWithoutUserInput
-  work: WorkUpdateManyWithoutUserInput
+  volunteer: VolunteerUpdateManyWithoutUserNestedInput
+  work: WorkUpdateManyWithoutUserNestedInput
 }
 
 input UserUpdateWithoutLanguagesInput {
-  awards: AwardUpdateManyWithoutUserInput
-  education: EducationUpdateManyWithoutUserInput
+  awards: AwardUpdateManyWithoutUserNestedInput
+  education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
-  interests: InterestUpdateManyWithoutUserInput
+  interests: InterestUpdateManyWithoutUserNestedInput
   label: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
-  location: LocationUpdateOneWithoutUserInput
+  location: LocationUpdateOneWithoutUserNestedInput
   phone: StringFieldUpdateOperationsInput
-  profiles: ProfileUpdateManyWithoutUserInput
-  projects: ProjectUpdateManyWithoutUserInput
-  publications: PublicationUpdateManyWithoutUserInput
-  references: ReferenceUpdateManyWithoutUserInput
-  skills: SkillUpdateManyWithoutUserInput
+  profiles: ProfileUpdateManyWithoutUserNestedInput
+  projects: ProjectUpdateManyWithoutUserNestedInput
+  publications: PublicationUpdateManyWithoutUserNestedInput
+  references: ReferenceUpdateManyWithoutUserNestedInput
+  skills: SkillUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
-  volunteer: VolunteerUpdateManyWithoutUserInput
-  work: WorkUpdateManyWithoutUserInput
+  volunteer: VolunteerUpdateManyWithoutUserNestedInput
+  work: WorkUpdateManyWithoutUserNestedInput
 }
 
 input UserUpdateWithoutLocationInput {
-  awards: AwardUpdateManyWithoutUserInput
-  education: EducationUpdateManyWithoutUserInput
+  awards: AwardUpdateManyWithoutUserNestedInput
+  education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
-  interests: InterestUpdateManyWithoutUserInput
+  interests: InterestUpdateManyWithoutUserNestedInput
   label: StringFieldUpdateOperationsInput
-  languages: LanguageUpdateManyWithoutUserInput
+  languages: LanguageUpdateManyWithoutUserNestedInput
   lastName: StringFieldUpdateOperationsInput
   phone: StringFieldUpdateOperationsInput
-  profiles: ProfileUpdateManyWithoutUserInput
-  projects: ProjectUpdateManyWithoutUserInput
-  publications: PublicationUpdateManyWithoutUserInput
-  references: ReferenceUpdateManyWithoutUserInput
-  skills: SkillUpdateManyWithoutUserInput
+  profiles: ProfileUpdateManyWithoutUserNestedInput
+  projects: ProjectUpdateManyWithoutUserNestedInput
+  publications: PublicationUpdateManyWithoutUserNestedInput
+  references: ReferenceUpdateManyWithoutUserNestedInput
+  skills: SkillUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
-  volunteer: VolunteerUpdateManyWithoutUserInput
-  work: WorkUpdateManyWithoutUserInput
+  volunteer: VolunteerUpdateManyWithoutUserNestedInput
+  work: WorkUpdateManyWithoutUserNestedInput
 }
 
 input UserUpdateWithoutProfilesInput {
-  awards: AwardUpdateManyWithoutUserInput
-  education: EducationUpdateManyWithoutUserInput
+  awards: AwardUpdateManyWithoutUserNestedInput
+  education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
-  interests: InterestUpdateManyWithoutUserInput
+  interests: InterestUpdateManyWithoutUserNestedInput
   label: StringFieldUpdateOperationsInput
-  languages: LanguageUpdateManyWithoutUserInput
+  languages: LanguageUpdateManyWithoutUserNestedInput
   lastName: StringFieldUpdateOperationsInput
-  location: LocationUpdateOneWithoutUserInput
+  location: LocationUpdateOneWithoutUserNestedInput
   phone: StringFieldUpdateOperationsInput
-  projects: ProjectUpdateManyWithoutUserInput
-  publications: PublicationUpdateManyWithoutUserInput
-  references: ReferenceUpdateManyWithoutUserInput
-  skills: SkillUpdateManyWithoutUserInput
+  projects: ProjectUpdateManyWithoutUserNestedInput
+  publications: PublicationUpdateManyWithoutUserNestedInput
+  references: ReferenceUpdateManyWithoutUserNestedInput
+  skills: SkillUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
-  volunteer: VolunteerUpdateManyWithoutUserInput
-  work: WorkUpdateManyWithoutUserInput
+  volunteer: VolunteerUpdateManyWithoutUserNestedInput
+  work: WorkUpdateManyWithoutUserNestedInput
 }
 
 input UserUpdateWithoutProjectsInput {
-  awards: AwardUpdateManyWithoutUserInput
-  education: EducationUpdateManyWithoutUserInput
+  awards: AwardUpdateManyWithoutUserNestedInput
+  education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
-  interests: InterestUpdateManyWithoutUserInput
+  interests: InterestUpdateManyWithoutUserNestedInput
   label: StringFieldUpdateOperationsInput
-  languages: LanguageUpdateManyWithoutUserInput
+  languages: LanguageUpdateManyWithoutUserNestedInput
   lastName: StringFieldUpdateOperationsInput
-  location: LocationUpdateOneWithoutUserInput
+  location: LocationUpdateOneWithoutUserNestedInput
   phone: StringFieldUpdateOperationsInput
-  profiles: ProfileUpdateManyWithoutUserInput
-  publications: PublicationUpdateManyWithoutUserInput
-  references: ReferenceUpdateManyWithoutUserInput
-  skills: SkillUpdateManyWithoutUserInput
+  profiles: ProfileUpdateManyWithoutUserNestedInput
+  publications: PublicationUpdateManyWithoutUserNestedInput
+  references: ReferenceUpdateManyWithoutUserNestedInput
+  skills: SkillUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
-  volunteer: VolunteerUpdateManyWithoutUserInput
-  work: WorkUpdateManyWithoutUserInput
+  volunteer: VolunteerUpdateManyWithoutUserNestedInput
+  work: WorkUpdateManyWithoutUserNestedInput
 }
 
 input UserUpdateWithoutPublicationsInput {
-  awards: AwardUpdateManyWithoutUserInput
-  education: EducationUpdateManyWithoutUserInput
+  awards: AwardUpdateManyWithoutUserNestedInput
+  education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
-  interests: InterestUpdateManyWithoutUserInput
+  interests: InterestUpdateManyWithoutUserNestedInput
   label: StringFieldUpdateOperationsInput
-  languages: LanguageUpdateManyWithoutUserInput
+  languages: LanguageUpdateManyWithoutUserNestedInput
   lastName: StringFieldUpdateOperationsInput
-  location: LocationUpdateOneWithoutUserInput
+  location: LocationUpdateOneWithoutUserNestedInput
   phone: StringFieldUpdateOperationsInput
-  profiles: ProfileUpdateManyWithoutUserInput
-  projects: ProjectUpdateManyWithoutUserInput
-  references: ReferenceUpdateManyWithoutUserInput
-  skills: SkillUpdateManyWithoutUserInput
+  profiles: ProfileUpdateManyWithoutUserNestedInput
+  projects: ProjectUpdateManyWithoutUserNestedInput
+  references: ReferenceUpdateManyWithoutUserNestedInput
+  skills: SkillUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
-  volunteer: VolunteerUpdateManyWithoutUserInput
-  work: WorkUpdateManyWithoutUserInput
+  volunteer: VolunteerUpdateManyWithoutUserNestedInput
+  work: WorkUpdateManyWithoutUserNestedInput
 }
 
 input UserUpdateWithoutReferencesInput {
-  awards: AwardUpdateManyWithoutUserInput
-  education: EducationUpdateManyWithoutUserInput
+  awards: AwardUpdateManyWithoutUserNestedInput
+  education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
-  interests: InterestUpdateManyWithoutUserInput
+  interests: InterestUpdateManyWithoutUserNestedInput
   label: StringFieldUpdateOperationsInput
-  languages: LanguageUpdateManyWithoutUserInput
+  languages: LanguageUpdateManyWithoutUserNestedInput
   lastName: StringFieldUpdateOperationsInput
-  location: LocationUpdateOneWithoutUserInput
+  location: LocationUpdateOneWithoutUserNestedInput
   phone: StringFieldUpdateOperationsInput
-  profiles: ProfileUpdateManyWithoutUserInput
-  projects: ProjectUpdateManyWithoutUserInput
-  publications: PublicationUpdateManyWithoutUserInput
-  skills: SkillUpdateManyWithoutUserInput
+  profiles: ProfileUpdateManyWithoutUserNestedInput
+  projects: ProjectUpdateManyWithoutUserNestedInput
+  publications: PublicationUpdateManyWithoutUserNestedInput
+  skills: SkillUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
-  volunteer: VolunteerUpdateManyWithoutUserInput
-  work: WorkUpdateManyWithoutUserInput
+  volunteer: VolunteerUpdateManyWithoutUserNestedInput
+  work: WorkUpdateManyWithoutUserNestedInput
 }
 
 input UserUpdateWithoutSkillsInput {
-  awards: AwardUpdateManyWithoutUserInput
-  education: EducationUpdateManyWithoutUserInput
+  awards: AwardUpdateManyWithoutUserNestedInput
+  education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
-  interests: InterestUpdateManyWithoutUserInput
+  interests: InterestUpdateManyWithoutUserNestedInput
   label: StringFieldUpdateOperationsInput
-  languages: LanguageUpdateManyWithoutUserInput
+  languages: LanguageUpdateManyWithoutUserNestedInput
   lastName: StringFieldUpdateOperationsInput
-  location: LocationUpdateOneWithoutUserInput
+  location: LocationUpdateOneWithoutUserNestedInput
   phone: StringFieldUpdateOperationsInput
-  profiles: ProfileUpdateManyWithoutUserInput
-  projects: ProjectUpdateManyWithoutUserInput
-  publications: PublicationUpdateManyWithoutUserInput
-  references: ReferenceUpdateManyWithoutUserInput
+  profiles: ProfileUpdateManyWithoutUserNestedInput
+  projects: ProjectUpdateManyWithoutUserNestedInput
+  publications: PublicationUpdateManyWithoutUserNestedInput
+  references: ReferenceUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
-  volunteer: VolunteerUpdateManyWithoutUserInput
-  work: WorkUpdateManyWithoutUserInput
+  volunteer: VolunteerUpdateManyWithoutUserNestedInput
+  work: WorkUpdateManyWithoutUserNestedInput
 }
 
 input UserUpdateWithoutVolunteerInput {
-  awards: AwardUpdateManyWithoutUserInput
-  education: EducationUpdateManyWithoutUserInput
+  awards: AwardUpdateManyWithoutUserNestedInput
+  education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
-  interests: InterestUpdateManyWithoutUserInput
+  interests: InterestUpdateManyWithoutUserNestedInput
   label: StringFieldUpdateOperationsInput
-  languages: LanguageUpdateManyWithoutUserInput
+  languages: LanguageUpdateManyWithoutUserNestedInput
   lastName: StringFieldUpdateOperationsInput
-  location: LocationUpdateOneWithoutUserInput
+  location: LocationUpdateOneWithoutUserNestedInput
   phone: StringFieldUpdateOperationsInput
-  profiles: ProfileUpdateManyWithoutUserInput
-  projects: ProjectUpdateManyWithoutUserInput
-  publications: PublicationUpdateManyWithoutUserInput
-  references: ReferenceUpdateManyWithoutUserInput
-  skills: SkillUpdateManyWithoutUserInput
+  profiles: ProfileUpdateManyWithoutUserNestedInput
+  projects: ProjectUpdateManyWithoutUserNestedInput
+  publications: PublicationUpdateManyWithoutUserNestedInput
+  references: ReferenceUpdateManyWithoutUserNestedInput
+  skills: SkillUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
-  work: WorkUpdateManyWithoutUserInput
+  work: WorkUpdateManyWithoutUserNestedInput
 }
 
 input UserUpdateWithoutWorkInput {
-  awards: AwardUpdateManyWithoutUserInput
-  education: EducationUpdateManyWithoutUserInput
+  awards: AwardUpdateManyWithoutUserNestedInput
+  education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
-  interests: InterestUpdateManyWithoutUserInput
+  interests: InterestUpdateManyWithoutUserNestedInput
   label: StringFieldUpdateOperationsInput
-  languages: LanguageUpdateManyWithoutUserInput
+  languages: LanguageUpdateManyWithoutUserNestedInput
   lastName: StringFieldUpdateOperationsInput
-  location: LocationUpdateOneWithoutUserInput
+  location: LocationUpdateOneWithoutUserNestedInput
   phone: StringFieldUpdateOperationsInput
-  profiles: ProfileUpdateManyWithoutUserInput
-  projects: ProjectUpdateManyWithoutUserInput
-  publications: PublicationUpdateManyWithoutUserInput
-  references: ReferenceUpdateManyWithoutUserInput
-  skills: SkillUpdateManyWithoutUserInput
+  profiles: ProfileUpdateManyWithoutUserNestedInput
+  projects: ProjectUpdateManyWithoutUserNestedInput
+  publications: PublicationUpdateManyWithoutUserNestedInput
+  references: ReferenceUpdateManyWithoutUserNestedInput
+  skills: SkillUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
-  volunteer: VolunteerUpdateManyWithoutUserInput
+  volunteer: VolunteerUpdateManyWithoutUserNestedInput
 }
 
 input UserUpsertWithoutAwardsInput {
@@ -5388,7 +5388,7 @@ input VolunteerUpdateInput {
   startDate: DateTimeFieldUpdateOperationsInput
   summary: StringFieldUpdateOperationsInput
   url: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutVolunteerInput
+  user: UserUpdateOneWithoutVolunteerNestedInput
 }
 
 input VolunteerUpdateManyMutationInput {
@@ -5406,7 +5406,7 @@ input VolunteerUpdateManyWithWhereWithoutUserInput {
   where: VolunteerScalarWhereInput!
 }
 
-input VolunteerUpdateManyWithoutUserInput {
+input VolunteerUpdateManyWithoutUserNestedInput {
   connect: [VolunteerWhereUniqueInput!]
   connectOrCreate: [VolunteerCreateOrConnectWithoutUserInput!]
   create: [VolunteerCreateWithoutUserInput!]
@@ -5740,7 +5740,7 @@ input WorkUpdateInput {
   startDate: DateTimeFieldUpdateOperationsInput
   summary: StringFieldUpdateOperationsInput
   url: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutWorkInput
+  user: UserUpdateOneWithoutWorkNestedInput
 }
 
 input WorkUpdateManyMutationInput {
@@ -5758,7 +5758,7 @@ input WorkUpdateManyWithWhereWithoutUserInput {
   where: WorkScalarWhereInput!
 }
 
-input WorkUpdateManyWithoutUserInput {
+input WorkUpdateManyWithoutUserNestedInput {
   connect: [WorkWhereUniqueInput!]
   connectOrCreate: [WorkCreateOrConnectWithoutUserInput!]
   create: [WorkCreateWithoutUserInput!]

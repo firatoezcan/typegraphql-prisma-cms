@@ -35,7 +35,7 @@ const createManyReadMiddlewares = <TModel extends Prisma.ModelName>(model: TMode
     [`${lowerCaseFirstLetter(model)}s`]: [UseMiddleware(createFindManyMiddleware(model))],
     [`${lowerCaseFirstLetter(model)}`]: [UseMiddleware(createFindSingleMiddleware(model))],
     [`groupBy${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
-    [`update${model}`]: [UseMiddleware(createUpdateSingleMiddleware(model))],
+    [`updateOne${model}`]: [UseMiddleware(createUpdateSingleMiddleware(model))],
     [`updateMany${model}`]: [UseMiddleware(createUpdateManyMiddleware(model))],
   } as unknown as ResolverActionsConfig<TModel>;
 };
@@ -45,7 +45,7 @@ for (const model of Object.values(Prisma.ModelName)) {
   resolversEnhanceMap[model] = {
     _all: [UseMiddleware(LogTimeMiddleware)],
     ...createManyReadMiddlewares(model),
-    [`create${model}`]: [UseMiddleware(createCreateSingleMiddleware(model))],
+    [`createOne${model}`]: [UseMiddleware(createCreateSingleMiddleware(model))],
     [`createMany${model}`]: [UseMiddleware(createCreateManyMiddleware(model))],
   };
 }
