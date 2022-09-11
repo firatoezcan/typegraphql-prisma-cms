@@ -12,6 +12,8 @@ export const createFindManyMiddleware = (model: Prisma.ModelName) => {
     const { context, args } = resolverData;
 
     const userAbility = await createUserReadAbility(context);
+    if (userAbility.can("read", model)) return next();
+
     const userWhere = accessibleBy(userAbility, "read")[model];
 
     resolverData.args.where = args.where
@@ -30,6 +32,8 @@ export const createFindOneMiddleware = (model: Prisma.ModelName) => {
   const FindOneMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
     const { context, args } = resolverData;
     const userAbility = await createUserReadAbility(context);
+    if (userAbility.can("read", model)) return next();
+
     const userWhere = accessibleBy(userAbility, "read")[model];
 
     const actualResult = await next();
