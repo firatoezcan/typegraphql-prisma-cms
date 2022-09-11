@@ -18,6 +18,7 @@ import { createFindManyMiddleware, createFindSingleMiddleware } from "./middlewa
 import { LogTimeMiddleware } from "./middlewares/log-time";
 import { createUpdateManyMiddleware, createUpdateSingleMiddleware } from "./middlewares/update";
 import { createDeleteSingleMiddleware, createDeleteManyMiddleware } from "./middlewares/delete";
+import { GraphQLError } from "graphql";
 
 export interface Context {
   prisma: PrismaClient;
@@ -86,6 +87,17 @@ async function main() {
     context: ({ req }): Context => {
       const userEmail = req.headers.authorization;
       return { prisma, userEmail };
+    },
+    formatError: (err) => {
+      // Remove the exception information when not in development
+      if (process.env.NODE_ENV !== "development") {
+        // Don't give the specific errors to the client.
+        if (err instanceof GraphQLError) {
+          err.extensions.exception = undefined;
+          return err;
+        }
+      }
+      return err;
     },
   });
 
