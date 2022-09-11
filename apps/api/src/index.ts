@@ -17,6 +17,7 @@ import { createCreateManyMiddleware, createCreateSingleMiddleware } from "./midd
 import { createFindManyMiddleware, createFindSingleMiddleware } from "./middlewares/find";
 import { LogTimeMiddleware } from "./middlewares/log-time";
 import { createUpdateManyMiddleware, createUpdateSingleMiddleware } from "./middlewares/update";
+import { createDeleteSingleMiddleware, createDeleteManyMiddleware } from "./middlewares/delete";
 
 export interface Context {
   prisma: PrismaClient;
@@ -37,6 +38,8 @@ const createManyReadMiddlewares = <TModel extends Prisma.ModelName>(model: TMode
     [`groupBy${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
     [`updateOne${model}`]: [UseMiddleware(createUpdateSingleMiddleware(model))],
     [`updateMany${model}`]: [UseMiddleware(createUpdateManyMiddleware(model))],
+    [`deleteOne${model}`]: [UseMiddleware(createDeleteSingleMiddleware(model))],
+    [`deleteMany${model}`]: [UseMiddleware(createDeleteManyMiddleware(model))],
   } as unknown as ResolverActionsConfig<TModel>;
 };
 

@@ -1,5 +1,6 @@
 import { subject } from "@casl/ability";
 import { Prisma } from "@prisma/client";
+import { ForbiddenError } from "apollo-server";
 import { NextFn, ResolverData } from "type-graphql";
 import { Context } from "..";
 import { createInclude } from "../utils/create-include";
@@ -113,7 +114,7 @@ const checkModelInput = async (
       const relationInput = data[relation.name];
       if (!relationInput) return null;
       const action = Object.keys(relationInput)[0] as ActionType;
-      if (action === "connectOrCreate") throw new Error("connectOrCreate is not supported");
+      if (action === "connectOrCreate") throw new ForbiddenError("connectOrCreate is not supported");
       // Already handled above
       if (action === "connect") {
         return true;
@@ -127,7 +128,7 @@ const checkModelInput = async (
         return checkModelInput(context, ability, action, prismaModel, relation.type, relationInput[action]);
       }
 
-      throw new Error(`Unsupported action "${action}"`);
+      throw new ForbiddenError(`Unsupported action "${action}"`);
     })
     .filter((val) => val !== null);
   return [canCreateEntity, ...relationResults];
@@ -148,7 +149,7 @@ export const createCreateSingleMiddleware = (model: Prisma.ModelName) => {
     const flattedResults = await Promise.all([...new Set(results.flat(Infinity))]);
     const invalidResults = flattedResults.filter((result) => typeof result === "string" || !result);
     if (invalidResults.length > 0) {
-      throw new Error(invalidResults.join("\n"));
+      throw new ForbiddenError(invalidResults.join("\n"));
     }
 
     return next();
@@ -171,7 +172,7 @@ export const createCreateManyMiddleware = (model: Prisma.ModelName) => {
     const flattedResults = await Promise.all([...new Set(results.flat(Infinity))]);
     const invalidResults = flattedResults.filter((result) => typeof result === "string" || !result);
     if (invalidResults.length > 0) {
-      throw new Error(invalidResults.join("\n"));
+      throw new ForbiddenError(invalidResults.join("\n"));
     }
 
     return next();

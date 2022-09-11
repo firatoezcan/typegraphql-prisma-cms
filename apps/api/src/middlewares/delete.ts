@@ -8,8 +8,8 @@ import { NextFn, ResolverData } from "type-graphql";
 import { Context } from "..";
 import { createUserReadAbility } from "../utils/permissions";
 
-export const createUpdateManyMiddleware = (model: Prisma.ModelName) => {
-  const UpdateManyMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
+export const createDeleteManyMiddleware = (model: Prisma.ModelName) => {
+  const DeleteManyMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
     const { context, args } = resolverData;
 
     const userAbility = await createUserReadAbility(context);
@@ -23,12 +23,12 @@ export const createUpdateManyMiddleware = (model: Prisma.ModelName) => {
 
     return next();
   };
-  Object.defineProperty(UpdateManyMiddleware, "name", { value: `UpdateMany${model}Middleware` });
-  return UpdateManyMiddleware;
+  Object.defineProperty(DeleteManyMiddleware, "name", { value: `DeleteMany${model}Middleware` });
+  return DeleteManyMiddleware;
 };
 
-export const createUpdateSingleMiddleware = (model: Prisma.ModelName) => {
-  const UpdateSingleMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
+export const createDeleteSingleMiddleware = (model: Prisma.ModelName) => {
+  const DeleteSingleMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
     const { context, args } = resolverData;
 
     const userAbility = await createUserReadAbility(context);
@@ -44,23 +44,17 @@ export const createUpdateSingleMiddleware = (model: Prisma.ModelName) => {
 
     return resolverData.context.prisma.$transaction(
       async (prisma) => {
-        const beforeUpdateEntry = await prisma[model].findFirst({
+        const beforeDeleteEntry = await prisma[model].findFirst({
           where: resolverData.args.where,
         });
-        if (!beforeUpdateEntry) {
-          throw new ForbiddenError(`Cannot update "${model}" with "${JSON.stringify(originalArgs.where)}"`);
+        if (!beforeDeleteEntry) {
+          throw new ForbiddenError(`Cannot delete "${model}" with "${JSON.stringify(originalArgs.where)}"`);
         }
-        const updatedEntry = await prisma[model].update({
+        const deletedEntry = await prisma[model].delete({
           ...originalArgs,
           ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
         });
-        const afterUpdateEntry = await prisma[model].findFirst({
-          where: resolverData.args.where,
-        });
-        if (!afterUpdateEntry || beforeUpdateEntry.id !== afterUpdateEntry.id) {
-          throw new ForbiddenError(`Cannot update "${model}" with "${JSON.stringify(originalArgs.where)}"`);
-        }
-        return updatedEntry;
+        return deletedEntry;
       },
       {
         // Setting isolation to Serializable because of a race condition
@@ -69,6 +63,6 @@ export const createUpdateSingleMiddleware = (model: Prisma.ModelName) => {
       }
     );
   };
-  Object.defineProperty(UpdateSingleMiddleware, "name", { value: `UpdateSingle${model}Middleware` });
-  return UpdateSingleMiddleware;
+  Object.defineProperty(DeleteSingleMiddleware, "name", { value: `DeleteSingle${model}Middleware` });
+  return DeleteSingleMiddleware;
 };
