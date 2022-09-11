@@ -16,6 +16,7 @@ import { buildSchema, UseMiddleware } from "type-graphql";
 import { createCreateManyMiddleware, createCreateSingleMiddleware } from "./middlewares/create";
 import { createFindManyMiddleware, createFindSingleMiddleware } from "./middlewares/find";
 import { LogTimeMiddleware } from "./middlewares/log-time";
+import { createUpdateManyMiddleware, createUpdateSingleMiddleware } from "./middlewares/update";
 
 export interface Context {
   prisma: PrismaClient;
@@ -34,7 +35,8 @@ const createManyReadMiddlewares = <TModel extends Prisma.ModelName>(model: TMode
     [`${lowerCaseFirstLetter(model)}s`]: [UseMiddleware(createFindManyMiddleware(model))],
     [`${lowerCaseFirstLetter(model)}`]: [UseMiddleware(createFindSingleMiddleware(model))],
     [`groupBy${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
-    [`updateMany${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
+    [`update${model}`]: [UseMiddleware(createUpdateSingleMiddleware(model))],
+    [`updateMany${model}`]: [UseMiddleware(createUpdateManyMiddleware(model))],
   } as unknown as ResolverActionsConfig<TModel>;
 };
 

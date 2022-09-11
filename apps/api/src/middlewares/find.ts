@@ -51,6 +51,8 @@ export const createFindSingleMiddleware = (model: Prisma.ModelName) => {
       ...resolverData.args,
       ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
     });
+
+    // Why is this even here?
     // Todo: Check unique columns here (could be something else than id)
     if (actualResult.id !== result.id) {
       return null;
