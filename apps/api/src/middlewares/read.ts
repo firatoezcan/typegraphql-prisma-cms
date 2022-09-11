@@ -5,13 +5,14 @@ import graphqlFields from "graphql-fields";
 import { NextFn, ResolverData } from "type-graphql";
 import { Context } from "..";
 import { createUserReadAbility } from "../utils/permissions";
+import { getUniqueField } from "../utils/prisma";
 
 export const createFindManyMiddleware = (model: Prisma.ModelName) => {
   const FindManyMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
     const { context, args } = resolverData;
 
     const userAbility = await createUserReadAbility(context);
-    const userWhere = accessibleBy(userAbility)[model];
+    const userWhere = accessibleBy(userAbility, "read")[model];
 
     resolverData.args.where = args.where
       ? {
@@ -28,9 +29,8 @@ export const createFindManyMiddleware = (model: Prisma.ModelName) => {
 export const createFindOneMiddleware = (model: Prisma.ModelName) => {
   const FindOneMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
     const { context, args } = resolverData;
-
     const userAbility = await createUserReadAbility(context);
-    const userWhere = accessibleBy(userAbility)[model];
+    const userWhere = accessibleBy(userAbility, "read")[model];
 
     const actualResult = await next();
     resolverData.args.where = args.where
@@ -39,10 +39,12 @@ export const createFindOneMiddleware = (model: Prisma.ModelName) => {
         }
       : userWhere;
     const { _count } = transformFields(graphqlFields(resolverData.info));
+    const field = getUniqueField(model);
+
     const result = await resolverData.context.prisma[model].findFirst({
       ...resolverData.args,
       where: {
-        AND: [resolverData.args.where, { id: { equals: actualResult.id } }],
+        AND: [resolverData.args.where, field ? { [field]: { equals: actualResult[field] } } : actualResult],
       },
       ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
     });

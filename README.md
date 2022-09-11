@@ -34,9 +34,6 @@ Together you get a superb developer experience where most of your work is either
 #### **For getting started quickly run these together:**
 
 ```bash
-# If you ran this once before copy this line too so you start out fresh
-yarn api wipe
-
 cp apps/api/.env.example apps/api/.env
 yarn api upd
 yarn api prisma migrate reset
@@ -46,5 +43,70 @@ yarn api dev
 
 ## Todo Liste
 
-- Tables without inputs break the api (this may break joint tables)
-- Make a better default schema including sample data
+- Tables without inputs break the api (this breaks joint tables without an additional id column)
+
+## Queries for testing
+
+After starting the server you can access Apollo Studio at `http://localhost:4000`  
+The playground has an editor in the middle and the option to set headers below. This is important so you can test out the access control.
+
+For starting out set `CustomerId` in the headers to `1` and `EmployeeId` to `2`. Afterwards paste the queries below into the editor and start sending out requests.
+
+If you want to change `read` permissions or want to add permissions for mutations feel free to touch `apps/api/src/utils/permissions.ts`. The `casl` documentation goes really in-depth so take a look there if you want to try some more advanced rules (f.e. recursive read relations on `employee.ReportsTo -> employee.EmployeeId`)
+
+```graphql
+# Albums and Artists are public, so you can query all information on them
+query Albums {
+  albums {
+    AlbumId
+    Title
+    ArtistId
+  }
+}
+
+query Artists {
+  artists {
+    Name
+  }
+}
+
+# You can only query your own info OR if you are an employee query the info from customers that have you as their SupportRepId
+query Customers {
+  customers {
+    CustomerId
+    Email
+    SupportRepId
+  }
+}
+
+# You can get all information on employees that report to you
+query Employess {
+  employees {
+    EmployeeId
+    Customer {
+      CustomerId
+      SupportRepId
+    }
+    ReportsTo
+  }
+}
+
+# Send this with EmployeeId header disabled
+query Invoices {
+  invoices {
+    InvoiceId
+    Total
+    InvoiceLine {
+      Track {
+        Name
+        Album {
+          Title
+        }
+        Composer
+      }
+      UnitPrice
+      Quantity
+    }
+  }
+}
+```

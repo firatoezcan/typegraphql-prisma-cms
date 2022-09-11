@@ -1,8 +1,3 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["interactiveTransactions"]
@@ -13,218 +8,145 @@ generator typegraphql {
   output   = "../node_modules/.prisma/type-graphql"
 }
 
-model User {
-  id Int @id @default(autoincrement())
-
-  firstName String @map("first_name")
-  lastName  String @map("last_name")
-  email     String @unique
-  label     String
-  image     String
-  phone     String
-  summary   String
-
-  location     Location?
-  profiles     Profile[]
-  work         Work[]
-  volunteer    Volunteer[]
-  education    Education[]
-  publications Publication[]
-  skills       Skill[]
-  languages    Language[]
-  interests    Interest[]
-  references   Reference[]
-  projects     Project[]
-
-  @@map("user")
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model Location {
-  id Int @id @default(autoincrement())
+model Album {
+  AlbumId  Int     @id(map: "PK_Album") @unique
+  Title    String  @db.VarChar(160)
+  ArtistId Int
+  Artist   Artist  @relation(fields: [ArtistId], references: [ArtistId], onDelete: NoAction, onUpdate: NoAction, map: "FK_AlbumArtistId")
+  Track    Track[]
 
-  address     String
-  postalCode  String @map("postal_code")
-  city        String
-  countryCode String @map("country_code")
-  region      String
-
-  userId Int   @unique @map("user_id")
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("location")
+  @@index([ArtistId], map: "IFK_AlbumArtistId")
 }
 
-model Profile {
-  id Int @id @default(autoincrement())
-
-  network  String
-  username String
-  url      String
-
-  userId Int   @map("user_id")
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("profile")
+model Artist {
+  ArtistId Int     @id(map: "PK_Artist") @unique
+  Name     String? @db.VarChar(120)
+  Album    Album[]
 }
 
-model Work {
-  id         Int      @id @default(autoincrement())
-  name       String
-  position   String
-  summary    String
-  url        String
-  startDate  DateTime @map("start_date") @db.Timestamptz
-  endDate    DateTime @map("end_date") @db.Timestamptz
-  highlights String[]
+model Customer {
+  CustomerId   Int       @id(map: "PK_Customer") @unique
+  FirstName    String    @db.VarChar(40)
+  LastName     String    @db.VarChar(20)
+  Company      String?   @db.VarChar(80)
+  Address      String?   @db.VarChar(70)
+  City         String?   @db.VarChar(40)
+  State        String?   @db.VarChar(40)
+  Country      String?   @db.VarChar(40)
+  PostalCode   String?   @db.VarChar(10)
+  Phone        String?   @db.VarChar(24)
+  Fax          String?   @db.VarChar(24)
+  Email        String    @db.VarChar(60)
+  SupportRepId Int?
+  Employee     Employee? @relation(fields: [SupportRepId], references: [EmployeeId], onDelete: NoAction, onUpdate: NoAction, map: "FK_CustomerSupportRepId")
+  Invoice      Invoice[]
 
-  userId Int   @map("user_id")
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("work")
+  @@index([SupportRepId], map: "IFK_CustomerSupportRepId")
 }
 
-model Volunteer {
-  id           Int      @id @default(autoincrement())
-  organization String
-  position     String
-  summary      String
-  url          String
-  startDate    DateTime @map("start_date") @db.Timestamptz
-  endDate      DateTime @map("end_date") @db.Timestamptz
-  highlights   String[]
+model Employee {
+  EmployeeId     Int        @id(map: "PK_Employee") @unique
+  LastName       String     @db.VarChar(20)
+  FirstName      String     @db.VarChar(20)
+  Title          String?    @db.VarChar(30)
+  ReportsTo      Int?
+  BirthDate      DateTime?  @db.Timestamp(6)
+  HireDate       DateTime?  @db.Timestamp(6)
+  Address        String?    @db.VarChar(70)
+  City           String?    @db.VarChar(40)
+  State          String?    @db.VarChar(40)
+  Country        String?    @db.VarChar(40)
+  PostalCode     String?    @db.VarChar(10)
+  Phone          String?    @db.VarChar(24)
+  Fax            String?    @db.VarChar(24)
+  Email          String?    @db.VarChar(60)
+  Employee       Employee?  @relation("EmployeeToEmployee", fields: [ReportsTo], references: [EmployeeId], onDelete: NoAction, onUpdate: NoAction, map: "FK_EmployeeReportsTo")
+  Customer       Customer[]
+  other_Employee Employee[] @relation("EmployeeToEmployee")
 
-  userId Int   @map("user_id")
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("volunteer")
+  @@index([ReportsTo], map: "IFK_EmployeeReportsTo")
 }
 
-model Education {
-  id          Int      @id @default(autoincrement())
-  institution String
-  area        String
-  studyType   String   @map("study_type")
-  url         String
-  startDate   DateTime @map("start_date") @db.Timestamptz
-  endDate     DateTime @map("end_date") @db.Timestamptz
-  score       String
-  courses     String[]
-
-  userId Int   @map("user_id")
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("education")
+model Genre {
+  GenreId Int     @id(map: "PK_Genre") @unique
+  Name    String? @db.VarChar(120)
+  Track   Track[]
 }
 
-model Award {
-  id      Int      @id @default(autoincrement())
-  title   String
-  date    DateTime @db.Timestamptz
-  awarder String
-  summary String
+model Invoice {
+  InvoiceId         Int           @id(map: "PK_Invoice") @unique
+  CustomerId        Int
+  InvoiceDate       DateTime      @db.Timestamp(6)
+  BillingAddress    String?       @db.VarChar(70)
+  BillingCity       String?       @db.VarChar(40)
+  BillingState      String?       @db.VarChar(40)
+  BillingCountry    String?       @db.VarChar(40)
+  BillingPostalCode String?       @db.VarChar(10)
+  Total             Decimal       @db.Decimal(10, 2)
+  Customer          Customer      @relation(fields: [CustomerId], references: [CustomerId], onDelete: NoAction, onUpdate: NoAction, map: "FK_InvoiceCustomerId")
+  InvoiceLine       InvoiceLine[]
 
-  projectId Int      @map("project_id")
-  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@map("awards")
+  @@index([CustomerId], map: "IFK_InvoiceCustomerId")
 }
 
-model Publication {
-  id          Int      @id @default(autoincrement())
-  name        String
-  publisher   String
-  url         String
-  releaseDate DateTime @map("release_date") @db.Timestamptz
-  summary     String
+model InvoiceLine {
+  InvoiceLineId Int     @id(map: "PK_InvoiceLine") @unique
+  InvoiceId     Int
+  TrackId       Int
+  UnitPrice     Decimal @db.Decimal(10, 2)
+  Quantity      Int
+  Invoice       Invoice @relation(fields: [InvoiceId], references: [InvoiceId], onDelete: NoAction, onUpdate: NoAction, map: "FK_InvoiceLineInvoiceId")
+  Track         Track   @relation(fields: [TrackId], references: [TrackId], onDelete: NoAction, onUpdate: NoAction, map: "FK_InvoiceLineTrackId")
 
-  userId Int   @map("user_id")
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("publication")
+  @@index([InvoiceId], map: "IFK_InvoiceLineInvoiceId")
+  @@index([TrackId], map: "IFK_InvoiceLineTrackId")
 }
 
-model Skill {
-  id       Int    @id @default(autoincrement())
-  category String
-  level    String
-
-  keywords String[]
-
-  userId Int   @map("user_id")
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("skill")
+model MediaType {
+  MediaTypeId Int     @id(map: "PK_MediaType") @unique
+  Name        String? @db.VarChar(120)
+  Track       Track[]
 }
 
-model Language {
-  id      Int    @id @default(autoincrement())
-  name    String
-  fluency String
-
-  userId Int   @map("user_id")
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("language")
+model Playlist {
+  PlaylistId    Int             @id(map: "PK_Playlist") @unique
+  Name          String?         @db.VarChar(120)
+  PlaylistTrack PlaylistTrack[]
 }
 
-model Interest {
-  id       Int      @id @default(autoincrement())
-  name     String
-  keywords String[]
+model PlaylistTrack {
+  PlayListTrackId String?  @unique @default(uuid())
+  PlaylistId      Int
+  TrackId         Int
+  Playlist        Playlist @relation(fields: [PlaylistId], references: [PlaylistId], onDelete: NoAction, onUpdate: NoAction, map: "FK_PlaylistTrackPlaylistId")
+  Track           Track    @relation(fields: [TrackId], references: [TrackId], onDelete: NoAction, onUpdate: NoAction, map: "FK_PlaylistTrackTrackId")
 
-  userId Int   @map("user_id")
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("interest")
+  @@id([PlaylistId, TrackId], map: "PK_PlaylistTrack")
+  @@index([TrackId], map: "IFK_PlaylistTrackTrackId")
 }
 
-model Reference {
-  id        Int    @id @default(autoincrement())
-  name      String
-  reference String
+model Track {
+  TrackId       Int             @id(map: "PK_Track") @unique
+  Name          String          @db.VarChar(200)
+  AlbumId       Int?
+  MediaTypeId   Int
+  GenreId       Int?
+  Composer      String?         @db.VarChar(220)
+  Milliseconds  Int
+  Bytes         Int?
+  UnitPrice     Decimal         @db.Decimal(10, 2)
+  Album         Album?          @relation(fields: [AlbumId], references: [AlbumId], onDelete: NoAction, onUpdate: NoAction, map: "FK_TrackAlbumId")
+  Genre         Genre?          @relation(fields: [GenreId], references: [GenreId], onDelete: NoAction, onUpdate: NoAction, map: "FK_TrackGenreId")
+  MediaType     MediaType       @relation(fields: [MediaTypeId], references: [MediaTypeId], onDelete: NoAction, onUpdate: NoAction, map: "FK_TrackMediaTypeId")
+  InvoiceLine   InvoiceLine[]
+  PlaylistTrack PlaylistTrack[]
 
-  userId Int   @map("user_id")
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("reference")
-}
-
-model Project {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  highlights  String[]
-  keywords    String[]
-  startDate   DateTime @map("start_date") @db.Timestamptz
-  endDate     DateTime @map("end_date") @db.Timestamptz
-  url         String
-  roles       String[]
-  entity      String
-  type        String
-  awards      Award[]
-
-  userId       Int                   @map("user_id")
-  user         User?                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  nestedLevel1 NestedProjectLevel1[]
-
-  @@map("project")
-}
-
-model NestedProjectLevel1 {
-  id        Int                   @id @default(autoincrement())
-  name      String
-  projectId Int                   @map("project_id")
-  project   Project?              @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  level2    NestedProjectLevel2[]
-
-  @@map("nested_project_level_1")
-}
-
-model NestedProjectLevel2 {
-  id        Int                  @id @default(autoincrement())
-  name      String
-  projectId Int                  @map("project_id")
-  project   NestedProjectLevel1? @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@map("nested_project_level_2")
+  @@index([AlbumId], map: "IFK_TrackAlbumId")
+  @@index([GenreId], map: "IFK_TrackGenreId")
+  @@index([MediaTypeId], map: "IFK_TrackMediaTypeId")
 }

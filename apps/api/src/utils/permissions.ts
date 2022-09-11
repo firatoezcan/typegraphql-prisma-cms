@@ -1,203 +1,117 @@
 import { AbilityBuilder, AbilityClass } from "@casl/ability";
-import { accessibleBy, PrismaAbility, Subjects } from "@casl/prisma";
+import { PrismaAbility, Subjects } from "@casl/prisma";
 import {
-  Award,
-  Education,
-  Interest,
-  Language,
-  Location,
-  NestedProjectLevel1,
-  NestedProjectLevel2,
-  Prisma,
-  Profile,
-  Project,
-  Publication,
-  Reference,
-  Skill,
-  User,
-  Volunteer,
-  Work,
+  Album,
+  Artist,
+  Customer,
+  Employee,
+  Genre,
+  Invoice,
+  InvoiceLine,
+  MediaType,
+  Playlist,
+  PlaylistTrack,
+  Track,
 } from "@prisma/client";
-import { time } from "console";
 import { Context } from "..";
 
 export type AppAbility = PrismaAbility<
   [
     "read" | "create" | "insert",
     Subjects<{
-      User: User;
-      Location: Location;
-      Profile: Profile;
-      Work: Work;
-      Volunteer: Volunteer;
-      Education: Education;
-      Award: Award;
-      Publication: Publication;
-      Skill: Skill;
-      Language: Language;
-      Interest: Interest;
-      Reference: Reference;
-      Project: Project;
-      NestedProjectLevel1: NestedProjectLevel1;
-      NestedProjectLevel2: NestedProjectLevel2;
+      Album: Album;
+      Artist: Artist;
+      Customer: Customer;
+      Employee: Employee;
+      Genre: Genre;
+      Invoice: Invoice;
+      InvoiceLine: InvoiceLine;
+      MediaType: MediaType;
+      Playlist: Playlist;
+      PlaylistTrack: PlaylistTrack;
+      Track: Track;
     }>
   ]
 >;
 
 const AppAbility = PrismaAbility as AbilityClass<AppAbility>;
 
-const readCache: Map<string, AppAbility> = new Map();
-
 export const createUserReadAbility = async (context: Context) => {
   const { can, cannot, build } = new AbilityBuilder(AppAbility);
 
-  const { userEmail, prisma } = context;
-  if (!userEmail) {
+  const { CustomerId, EmployeeId, prisma } = context;
+  can("read", "Album");
+  can("read", "Artist");
+  can("read", "Genre");
+  can("read", "MediaType");
+  can("read", "Playlist");
+  can("read", "PlaylistTrack");
+  can("read", "Track");
+  if (!CustomerId && !EmployeeId) {
     // Todo: Public only
     return build();
   }
-  if (readCache.has(userEmail)) {
-    return readCache.get(userEmail) as AppAbility;
+
+  if (EmployeeId) {
+    const employee = await prisma.employee.findUnique({ where: { EmployeeId }, select: { EmployeeId: true } });
+    if (!employee) {
+      throw new Error(`Couldn't find employee with id "${EmployeeId}"`);
+    }
+    can("read", "Customer", { SupportRepId: { equals: EmployeeId } });
+    can("read", "Invoice", { Customer: { is: { SupportRepId: { equals: EmployeeId } } } });
+    can("read", "InvoiceLine", { Invoice: { is: { Customer: { is: { SupportRepId: { equals: EmployeeId } } } } } });
+    can("read", "Employee", { ReportsTo: { equals: EmployeeId } });
+    can("read", "Customer", { Employee: { is: { ReportsTo: { equals: EmployeeId } } } });
+    can("read", "Invoice", { Customer: { is: { Employee: { is: { ReportsTo: { equals: EmployeeId } } } } } });
+    can("read", "InvoiceLine", {
+      Invoice: { is: { Customer: { is: { Employee: { is: { ReportsTo: { equals: EmployeeId } } } } } } },
+    });
+    return build();
   }
 
-  const user = await prisma.user.findUnique({ where: { email: userEmail }, select: { id: true } });
-  if (!user) {
-    throw new Error(`Couldn't find user with email "${userEmail}"`);
+  if (CustomerId) {
+    const customer = await prisma.customer.findUnique({ where: { CustomerId }, select: { CustomerId: true } });
+    if (!customer) {
+      throw new Error(`Couldn't find customer with id "${CustomerId}"`);
+    }
+
+    can("read", "Customer", { CustomerId: { equals: CustomerId } });
+    can("read", "Invoice", { CustomerId: { equals: CustomerId } });
+    can("read", "InvoiceLine", { Invoice: { is: { CustomerId: { equals: CustomerId } } } });
+    can("read", "Employee", { Customer: { some: { CustomerId: { equals: CustomerId } } } });
+    return build();
   }
 
-  // Todo: Generate this in a smart way depending on the location of the models
-  can("read", "User", { id: { equals: user.id } });
-  can("read", "Location", { userId: { equals: user.id } });
-  can("read", "Profile", { userId: { equals: user.id } });
-  can("read", "Work", { userId: { equals: user.id } });
-  can("read", "Volunteer", { userId: { equals: user.id } });
-  can("read", "Education", { userId: { equals: user.id } });
-  can("read", "Award", { project: { is: { userId: { equals: user.id } } } });
-  can("read", "Publication", { userId: { equals: user.id } });
-  can("read", "Skill", { userId: { equals: user.id } });
-  can("read", "Language", { userId: { equals: user.id } });
-  can("read", "Interest", { userId: { equals: user.id } });
-  can("read", "Reference", { userId: { equals: user.id } });
-  can("read", "Project", { userId: { equals: user.id } });
-
-  const ability = build();
-  readCache.set(userEmail, ability);
-  return ability;
+  return build();
 };
 
-export const createUserCreateAbility = async (context: Context) => {
+export const createUserModifyAbility = async (context: Context) => {
   const { can, cannot, build } = new AbilityBuilder(AppAbility);
 
-  const { userEmail, prisma } = context;
-  if (!userEmail) {
-    can("create", "User");
-    cannot("create", "User", ["id"]).because(`Cannot manually insert "id"`);
-    cannot("create", "User", { email: { not: { endsWith: "@gmail.com" } } }).because(
-      `Email has to end with "@gmail.com"`
-    );
+  const { CustomerId, EmployeeId, prisma } = context;
+
+  if (!CustomerId && !EmployeeId) {
     // Todo: Public only
-    return [undefined, build()] as const;
+    return build();
   }
 
-  const user = await prisma.user.findUnique({ where: { email: userEmail }, select: { id: true } });
-  if (!user) {
-    throw new Error(`Couldn't find user with email "${userEmail}"`);
+  if (EmployeeId) {
+    const employee = await prisma.employee.findUnique({ where: { EmployeeId }, select: { EmployeeId: true } });
+    if (!employee) {
+      throw new Error(`Couldn't find employee with id "${EmployeeId}"`);
+    }
+
+    return build();
   }
 
-  // Only allow gmail.com emails
-  cannot("create", "User");
-  // cannot("create", "User");
+  if (CustomerId) {
+    const customer = await prisma.customer.findUnique({ where: { CustomerId }, select: { CustomerId: true } });
+    if (!customer) {
+      throw new Error(`Couldn't find customer with id "${CustomerId}"`);
+    }
 
-  // Both syntaxes work
-  // can("create", "Work", { userId: user.id });
-  // Todo: Column permissions should be opt-in instead of opt-out
-  can("insert", "Work", ["**"]);
-  cannot("insert", "Work", ["highlights"]).because("Highlights is a premium only feature");
+    return build();
+  }
 
-  /**
-   * Create work when connected user
-   * has Frontend Skill Category OR
-   * some profile with linkedIn OR
-   * lives in Country DE AND has label Developer
-   */
-  can("create", "Work", {
-    user: {
-      is: {
-        AND: [
-          {
-            id: user.id,
-          },
-          {
-            OR: [
-              {
-                location: {
-                  is: {
-                    user: {
-                      is: {
-                        skills: {
-                          some: {
-                            category: { equals: "Frontend" },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-              {
-                profiles: {
-                  some: {
-                    network: { equals: "LinkedIn" },
-                  },
-                },
-              },
-              {
-                AND: [
-                  {
-                    location: {
-                      is: {
-                        countryCode: "DE",
-                        user: {
-                          is: {
-                            firstName: {
-                              equals: "Firat",
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                  { label: { contains: "Developer" } },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    },
-  });
-  can("insert", "Location", ["**"]);
-  can("create", "Location", { userId: { equals: user.id } });
-  can("insert", "Profile", ["**"]);
-  can("create", "Profile", { userId: { equals: user.id } });
-  can("insert", "Volunteer", ["**"]);
-  can("create", "Volunteer", { userId: { equals: user.id } });
-  can("insert", "Education", ["**"]);
-  can("create", "Education", { userId: { equals: user.id } });
-  can("insert", "Award", ["**"]);
-  can("create", "Award", { project: { is: { user: { is: { id: { equals: user.id } } } } } });
-  can("insert", "Publication", ["**"]);
-  can("create", "Publication", { userId: { equals: user.id } });
-  can("insert", "Skill", ["**"]);
-  can("create", "Skill", { userId: { equals: user.id } });
-  can("insert", "Language", ["**"]);
-  can("create", "Language", { userId: { equals: user.id } });
-  can("insert", "Interest", ["**"]);
-  can("create", "Interest", { userId: { equals: user.id } });
-  can("insert", "Reference", ["**"]);
-  can("create", "Reference", { userId: { equals: user.id } });
-  can("insert", "Project", ["**"]);
-  can("create", "Project", { userId: { equals: user.id } });
-  const ability = build();
-  return [user, ability] as const;
+  return build();
 };

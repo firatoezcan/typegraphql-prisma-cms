@@ -17,7 +17,7 @@ export const createDeleteManyMiddleware = (model: Prisma.ModelName) => {
     const relationFields = prismaModel.fields.filter((field) => field.kind === "object");
 
     const userAbility = await createUserReadAbility(context);
-    const userWhere = accessibleBy(userAbility)[model];
+    const userWhere = accessibleBy(userAbility, "delete")[model];
 
     const { _count } = transformFields(graphqlFields(resolverData.info));
 
@@ -70,7 +70,7 @@ export const createDeleteOneMiddleware = (model: Prisma.ModelName) => {
     const { context, args } = resolverData;
 
     const userAbility = await createUserReadAbility(context);
-    const userWhere = accessibleBy(userAbility)[model];
+    const userWhere = accessibleBy(userAbility, "delete")[model];
 
     const originalArgs = _.cloneDeep(args);
     resolverData.args.where = args.where

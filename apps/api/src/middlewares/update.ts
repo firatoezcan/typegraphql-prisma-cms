@@ -7,13 +7,14 @@ import _ from "lodash";
 import { NextFn, ResolverData } from "type-graphql";
 import { Context } from "..";
 import { createUserReadAbility } from "../utils/permissions";
+import { getUniqueField } from "../utils/prisma";
 
 export const createUpdateManyMiddleware = (model: Prisma.ModelName) => {
   const UpdateManyMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
     const { context, args } = resolverData;
 
     const userAbility = await createUserReadAbility(context);
-    const userWhere = accessibleBy(userAbility)[model];
+    const userWhere = accessibleBy(userAbility, "update")[model];
 
     resolverData.args.where = args.where
       ? {
@@ -32,7 +33,7 @@ export const createUpdateOneMiddleware = (model: Prisma.ModelName) => {
     const { context, args } = resolverData;
 
     const userAbility = await createUserReadAbility(context);
-    const userWhere = accessibleBy(userAbility)[model];
+    const userWhere = accessibleBy(userAbility, "update")[model];
 
     const originalArgs = _.cloneDeep(args);
     resolverData.args.where = args.where
@@ -42,6 +43,7 @@ export const createUpdateOneMiddleware = (model: Prisma.ModelName) => {
       : userWhere;
     const { _count } = transformFields(graphqlFields(resolverData.info));
 
+    const field = getUniqueField(model);
     return resolverData.context.prisma.$transaction(
       async (prisma) => {
         const beforeUpdateEntry = await prisma[model].findFirst({
@@ -57,7 +59,7 @@ export const createUpdateOneMiddleware = (model: Prisma.ModelName) => {
         const afterUpdateEntry = await prisma[model].findFirst({
           where: resolverData.args.where,
         });
-        if (!afterUpdateEntry || beforeUpdateEntry.id !== afterUpdateEntry.id) {
+        if (!afterUpdateEntry || beforeUpdateEntry[field] !== afterUpdateEntry[field]) {
           throw new ForbiddenError(`Cannot update "${model}" with "${JSON.stringify(originalArgs.where)}"`);
         }
         return updatedEntry;

@@ -22,7 +22,8 @@ import { GraphQLError } from "graphql";
 
 export interface Context {
   prisma: PrismaClient;
-  userEmail?: string;
+  CustomerId?: number;
+  EmployeeId?: number;
 }
 
 function lowerCaseFirstLetter(string: string) {
@@ -85,8 +86,15 @@ async function main() {
   const server = new ApolloServer({
     schema,
     context: ({ req }): Context => {
-      const userEmail = req.headers.authorization;
-      return { prisma, userEmail };
+      const CustomerId = req.headers["CustomerId".toLowerCase()];
+      const EmployeeId = req.headers["EmployeeId".toLowerCase()];
+      const parsedCustomerId = Number.parseInt(CustomerId as any);
+      const parsedEmployeeId = Number.parseInt(EmployeeId as any);
+      return {
+        prisma,
+        CustomerId: isNaN(parsedCustomerId) ? undefined : parsedCustomerId,
+        EmployeeId: isNaN(parsedEmployeeId) ? undefined : parsedEmployeeId,
+      };
     },
     formatError: (err) => {
       // Remove the exception information when not in development

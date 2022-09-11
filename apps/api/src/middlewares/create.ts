@@ -3,21 +3,19 @@ import { accessibleBy } from "@casl/prisma";
 import { Prisma } from "@prisma/client";
 import { ForbiddenError } from "apollo-server";
 import graphqlFields from "graphql-fields";
-import _ from "lodash";
 import { NextFn, ResolverData } from "type-graphql";
 import { Context } from "..";
-import { createUserReadAbility } from "../utils/permissions";
+import { createUserModifyAbility } from "../utils/permissions";
+import { findModel, getUniqueField } from "../utils/prisma";
 
 export const createCreateManyMiddleware = (model: Prisma.ModelName) => {
   const CreateManyMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
     const { context, args } = resolverData;
-    const findModel = (model: string) => Prisma.dmmf.datamodel.models.find((prismaModel) => prismaModel.name === model);
     const prismaModel = findModel(model);
-    if (!prismaModel) throw new Error(`Cannot find prisma model for model "${model}"`);
     const relationFields = prismaModel.fields.filter((field) => field.kind === "object");
 
-    const userAbility = await createUserReadAbility(context);
-    const userWhere = accessibleBy(userAbility)[model];
+    const userAbility = await createUserModifyAbility(context);
+    const userWhere = accessibleBy(userAbility, "create")[model];
 
     const { _count } = transformFields(graphqlFields(resolverData.info));
 
@@ -70,12 +68,12 @@ export const createCreateManyMiddleware = (model: Prisma.ModelName) => {
 export const createCreateOneMiddleware = (model: Prisma.ModelName) => {
   const CreateOneMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
     const { context, args } = resolverData;
-
-    const userAbility = await createUserReadAbility(context);
-    const userWhere = accessibleBy(userAbility)[model];
+    const userAbility = await createUserModifyAbility(context);
+    const userWhere = accessibleBy(userAbility, "create")[model];
 
     const { _count } = transformFields(graphqlFields(resolverData.info));
 
+    const field = getUniqueField(model);
     return resolverData.context.prisma.$transaction(
       async (prisma) => {
         const createdEntry = await prisma[model].create({
@@ -84,7 +82,7 @@ export const createCreateOneMiddleware = (model: Prisma.ModelName) => {
         });
         const afterCreateEntry = await prisma[model].findFirst({
           where: {
-            AND: [userWhere, { id: { equals: createdEntry.id } }],
+            AND: [userWhere, field ? { [field]: { equals: createdEntry[field] } } : createdEntry],
           },
         });
         if (!afterCreateEntry) {
