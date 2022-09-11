@@ -32,14 +32,6 @@ export const createFindSingleMiddleware = (model: Prisma.ModelName) => {
     const userAbility = await createUserReadAbility(context);
     const userWhere = accessibleBy(userAbility)[model];
 
-    /**
-     * Todo: Maybe fix? Can this even be fixed?
-     * We use a findFirst here instead of modifying the arguments for the findUnique
-     *
-     * This leads to a single query with a subqueries and inner joins instead of
-     * multiple seperate (and probably better) queries but creating the include object
-     * from the userAbility is not important right now. This works
-     */
     const actualResult = await next();
     resolverData.args.where = args.where
       ? {
@@ -49,14 +41,11 @@ export const createFindSingleMiddleware = (model: Prisma.ModelName) => {
     const { _count } = transformFields(graphqlFields(resolverData.info));
     const result = await resolverData.context.prisma[model].findFirst({
       ...resolverData.args,
+      where: {
+        AND: [resolverData.args.where, { id: { equals: actualResult.id } }],
+      },
       ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
     });
-
-    // Why is this even here?
-    // Todo: Check unique columns here (could be something else than id)
-    if (actualResult.id !== result.id) {
-      return null;
-    }
 
     return result;
   };
