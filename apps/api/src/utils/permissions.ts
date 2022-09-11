@@ -72,7 +72,7 @@ export const createUserReadAbility = async (context: Context) => {
   can("read", "Work", { userId: { equals: user.id } });
   can("read", "Volunteer", { userId: { equals: user.id } });
   can("read", "Education", { userId: { equals: user.id } });
-  can("read", "Award", { userId: { equals: user.id } });
+  can("read", "Award", { project: { is: { userId: { equals: user.id } } } });
   can("read", "Publication", { userId: { equals: user.id } });
   can("read", "Skill", { userId: { equals: user.id } });
   can("read", "Language", { userId: { equals: user.id } });
@@ -111,7 +111,7 @@ export const createUserCreateAbility = async (context: Context) => {
   }
 
   // Only allow gmail.com emails
-  can("create", "User");
+  cannot("create", "User");
   // cannot("create", "User");
 
   // Both syntaxes work
@@ -191,7 +191,7 @@ export const createUserCreateAbility = async (context: Context) => {
   can("insert", "Education", ["**"]);
   can("create", "Education", { userId: { equals: user.id } });
   can("insert", "Award", ["**"]);
-  can("create", "Award", { userId: { equals: user.id } });
+  can("create", "Award", { project: { is: { user: { is: { id: { equals: user.id } } } } } });
   can("insert", "Publication", ["**"]);
   can("create", "Publication", { userId: { equals: user.id } });
   can("insert", "Skill", ["**"]);

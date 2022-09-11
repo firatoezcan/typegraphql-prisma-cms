@@ -131,20 +131,20 @@ type Award {
   awarder: String!
   date: DateTime!
   id: Int!
+  project: Project
+  projectId: Int!
   summary: String!
   title: String!
-  user: User
-  userId: Int!
 }
 
 type AwardAvgAggregate {
   id: Float
-  userId: Float
+  projectId: Float
 }
 
 input AwardAvgOrderByAggregateInput {
   id: SortOrder
-  userId: SortOrder
+  projectId: SortOrder
 }
 
 type AwardCountAggregate {
@@ -152,38 +152,38 @@ type AwardCountAggregate {
   awarder: Int!
   date: Int!
   id: Int!
+  projectId: Int!
   summary: Int!
   title: Int!
-  userId: Int!
 }
 
 input AwardCountOrderByAggregateInput {
   awarder: SortOrder
   date: SortOrder
   id: SortOrder
+  projectId: SortOrder
   summary: SortOrder
   title: SortOrder
-  userId: SortOrder
 }
 
 input AwardCreateInput {
   awarder: String!
   date: DateTime!
+  project: ProjectCreateNestedOneWithoutAwardsInput
   summary: String!
   title: String!
-  user: UserCreateNestedOneWithoutAwardsInput
 }
 
 input AwardCreateManyInput {
   awarder: String!
   date: DateTime!
   id: Int
+  projectId: Int!
   summary: String!
   title: String!
-  userId: Int!
 }
 
-input AwardCreateManyUserInput {
+input AwardCreateManyProjectInput {
   awarder: String!
   date: DateTime!
   id: Int
@@ -191,24 +191,24 @@ input AwardCreateManyUserInput {
   title: String!
 }
 
-input AwardCreateManyUserInputEnvelope {
-  data: [AwardCreateManyUserInput!]!
+input AwardCreateManyProjectInputEnvelope {
+  data: [AwardCreateManyProjectInput!]!
   skipDuplicates: Boolean
 }
 
-input AwardCreateNestedManyWithoutUserInput {
+input AwardCreateNestedManyWithoutProjectInput {
   connect: [AwardWhereUniqueInput!]
-  connectOrCreate: [AwardCreateOrConnectWithoutUserInput!]
-  create: [AwardCreateWithoutUserInput!]
-  createMany: AwardCreateManyUserInputEnvelope
+  connectOrCreate: [AwardCreateOrConnectWithoutProjectInput!]
+  create: [AwardCreateWithoutProjectInput!]
+  createMany: AwardCreateManyProjectInputEnvelope
 }
 
-input AwardCreateOrConnectWithoutUserInput {
-  create: AwardCreateWithoutUserInput!
+input AwardCreateOrConnectWithoutProjectInput {
+  create: AwardCreateWithoutProjectInput!
   where: AwardWhereUniqueInput!
 }
 
-input AwardCreateWithoutUserInput {
+input AwardCreateWithoutProjectInput {
   awarder: String!
   date: DateTime!
   summary: String!
@@ -224,9 +224,9 @@ type AwardGroupBy {
   awarder: String!
   date: DateTime!
   id: Int!
+  projectId: Int!
   summary: String!
   title: String!
-  userId: Int!
 }
 
 input AwardListRelationFilter {
@@ -239,36 +239,36 @@ type AwardMaxAggregate {
   awarder: String
   date: DateTime
   id: Int
+  projectId: Int
   summary: String
   title: String
-  userId: Int
 }
 
 input AwardMaxOrderByAggregateInput {
   awarder: SortOrder
   date: SortOrder
   id: SortOrder
+  projectId: SortOrder
   summary: SortOrder
   title: SortOrder
-  userId: SortOrder
 }
 
 type AwardMinAggregate {
   awarder: String
   date: DateTime
   id: Int
+  projectId: Int
   summary: String
   title: String
-  userId: Int
 }
 
 input AwardMinOrderByAggregateInput {
   awarder: SortOrder
   date: SortOrder
   id: SortOrder
+  projectId: SortOrder
   summary: SortOrder
   title: SortOrder
-  userId: SortOrder
 }
 
 input AwardOrderByRelationAggregateInput {
@@ -284,28 +284,28 @@ input AwardOrderByWithAggregationInput {
   awarder: SortOrder
   date: SortOrder
   id: SortOrder
+  projectId: SortOrder
   summary: SortOrder
   title: SortOrder
-  userId: SortOrder
 }
 
 input AwardOrderByWithRelationInput {
   awarder: SortOrder
   date: SortOrder
   id: SortOrder
+  project: ProjectOrderByWithRelationInput
+  projectId: SortOrder
   summary: SortOrder
   title: SortOrder
-  user: UserOrderByWithRelationInput
-  userId: SortOrder
 }
 
 enum AwardScalarFieldEnum {
   awarder
   date
   id
+  projectId
   summary
   title
-  userId
 }
 
 input AwardScalarWhereInput {
@@ -315,9 +315,9 @@ input AwardScalarWhereInput {
   awarder: StringFilter
   date: DateTimeFilter
   id: IntFilter
+  projectId: IntFilter
   summary: StringFilter
   title: StringFilter
-  userId: IntFilter
 }
 
 input AwardScalarWhereWithAggregatesInput {
@@ -327,27 +327,27 @@ input AwardScalarWhereWithAggregatesInput {
   awarder: StringWithAggregatesFilter
   date: DateTimeWithAggregatesFilter
   id: IntWithAggregatesFilter
+  projectId: IntWithAggregatesFilter
   summary: StringWithAggregatesFilter
   title: StringWithAggregatesFilter
-  userId: IntWithAggregatesFilter
 }
 
 type AwardSumAggregate {
   id: Int
-  userId: Int
+  projectId: Int
 }
 
 input AwardSumOrderByAggregateInput {
   id: SortOrder
-  userId: SortOrder
+  projectId: SortOrder
 }
 
 input AwardUpdateInput {
   awarder: StringFieldUpdateOperationsInput
   date: DateTimeFieldUpdateOperationsInput
+  project: ProjectUpdateOneWithoutAwardsNestedInput
   summary: StringFieldUpdateOperationsInput
   title: StringFieldUpdateOperationsInput
-  user: UserUpdateOneWithoutAwardsNestedInput
 }
 
 input AwardUpdateManyMutationInput {
@@ -357,40 +357,40 @@ input AwardUpdateManyMutationInput {
   title: StringFieldUpdateOperationsInput
 }
 
-input AwardUpdateManyWithWhereWithoutUserInput {
+input AwardUpdateManyWithWhereWithoutProjectInput {
   data: AwardUpdateManyMutationInput!
   where: AwardScalarWhereInput!
 }
 
-input AwardUpdateManyWithoutUserNestedInput {
+input AwardUpdateManyWithoutProjectNestedInput {
   connect: [AwardWhereUniqueInput!]
-  connectOrCreate: [AwardCreateOrConnectWithoutUserInput!]
-  create: [AwardCreateWithoutUserInput!]
-  createMany: AwardCreateManyUserInputEnvelope
+  connectOrCreate: [AwardCreateOrConnectWithoutProjectInput!]
+  create: [AwardCreateWithoutProjectInput!]
+  createMany: AwardCreateManyProjectInputEnvelope
   delete: [AwardWhereUniqueInput!]
   deleteMany: [AwardScalarWhereInput!]
   disconnect: [AwardWhereUniqueInput!]
   set: [AwardWhereUniqueInput!]
-  update: [AwardUpdateWithWhereUniqueWithoutUserInput!]
-  updateMany: [AwardUpdateManyWithWhereWithoutUserInput!]
-  upsert: [AwardUpsertWithWhereUniqueWithoutUserInput!]
+  update: [AwardUpdateWithWhereUniqueWithoutProjectInput!]
+  updateMany: [AwardUpdateManyWithWhereWithoutProjectInput!]
+  upsert: [AwardUpsertWithWhereUniqueWithoutProjectInput!]
 }
 
-input AwardUpdateWithWhereUniqueWithoutUserInput {
-  data: AwardUpdateWithoutUserInput!
+input AwardUpdateWithWhereUniqueWithoutProjectInput {
+  data: AwardUpdateWithoutProjectInput!
   where: AwardWhereUniqueInput!
 }
 
-input AwardUpdateWithoutUserInput {
+input AwardUpdateWithoutProjectInput {
   awarder: StringFieldUpdateOperationsInput
   date: DateTimeFieldUpdateOperationsInput
   summary: StringFieldUpdateOperationsInput
   title: StringFieldUpdateOperationsInput
 }
 
-input AwardUpsertWithWhereUniqueWithoutUserInput {
-  create: AwardCreateWithoutUserInput!
-  update: AwardUpdateWithoutUserInput!
+input AwardUpsertWithWhereUniqueWithoutProjectInput {
+  create: AwardCreateWithoutProjectInput!
+  update: AwardUpdateWithoutProjectInput!
   where: AwardWhereUniqueInput!
 }
 
@@ -401,10 +401,10 @@ input AwardWhereInput {
   awarder: StringFilter
   date: DateTimeFilter
   id: IntFilter
+  project: ProjectRelationFilter
+  projectId: IntFilter
   summary: StringFilter
   title: StringFilter
-  user: UserRelationFilter
-  userId: IntFilter
 }
 
 input AwardWhereUniqueInput {
@@ -2554,6 +2554,7 @@ input ProfileWhereUniqueInput {
 
 type Project {
   _count: ProjectCount
+  awards(cursor: AwardWhereUniqueInput, distinct: [AwardScalarFieldEnum!], orderBy: [AwardOrderByWithRelationInput!], skip: Int, take: Int, where: AwardWhereInput): [Award!]!
   description: String!
   endDate: DateTime!
   entity: String!
@@ -2581,6 +2582,7 @@ input ProjectAvgOrderByAggregateInput {
 }
 
 type ProjectCount {
+  awards: Int!
   nestedLevel1: Int!
 }
 
@@ -2616,6 +2618,7 @@ input ProjectCountOrderByAggregateInput {
 }
 
 input ProjectCreateInput {
+  awards: AwardCreateNestedManyWithoutProjectInput
   description: String!
   endDate: DateTime!
   entity: String!
@@ -2671,10 +2674,21 @@ input ProjectCreateNestedManyWithoutUserInput {
   createMany: ProjectCreateManyUserInputEnvelope
 }
 
+input ProjectCreateNestedOneWithoutAwardsInput {
+  connect: ProjectWhereUniqueInput
+  connectOrCreate: ProjectCreateOrConnectWithoutAwardsInput
+  create: ProjectCreateWithoutAwardsInput
+}
+
 input ProjectCreateNestedOneWithoutNestedLevel1Input {
   connect: ProjectWhereUniqueInput
   connectOrCreate: ProjectCreateOrConnectWithoutNestedLevel1Input
   create: ProjectCreateWithoutNestedLevel1Input
+}
+
+input ProjectCreateOrConnectWithoutAwardsInput {
+  create: ProjectCreateWithoutAwardsInput!
+  where: ProjectWhereUniqueInput!
 }
 
 input ProjectCreateOrConnectWithoutNestedLevel1Input {
@@ -2687,7 +2701,23 @@ input ProjectCreateOrConnectWithoutUserInput {
   where: ProjectWhereUniqueInput!
 }
 
+input ProjectCreateWithoutAwardsInput {
+  description: String!
+  endDate: DateTime!
+  entity: String!
+  highlights: ProjectCreatehighlightsInput
+  keywords: ProjectCreatekeywordsInput
+  name: String!
+  nestedLevel1: NestedProjectLevel1CreateNestedManyWithoutProjectInput
+  roles: ProjectCreaterolesInput
+  startDate: DateTime!
+  type: String!
+  url: String!
+  user: UserCreateNestedOneWithoutProjectsInput
+}
+
 input ProjectCreateWithoutNestedLevel1Input {
+  awards: AwardCreateNestedManyWithoutProjectInput
   description: String!
   endDate: DateTime!
   entity: String!
@@ -2702,6 +2732,7 @@ input ProjectCreateWithoutNestedLevel1Input {
 }
 
 input ProjectCreateWithoutUserInput {
+  awards: AwardCreateNestedManyWithoutProjectInput
   description: String!
   endDate: DateTime!
   entity: String!
@@ -2826,6 +2857,7 @@ input ProjectOrderByWithAggregationInput {
 }
 
 input ProjectOrderByWithRelationInput {
+  awards: AwardOrderByRelationAggregateInput
   description: SortOrder
   endDate: SortOrder
   entity: SortOrder
@@ -2909,6 +2941,7 @@ input ProjectSumOrderByAggregateInput {
 }
 
 input ProjectUpdateInput {
+  awards: AwardUpdateManyWithoutProjectNestedInput
   description: StringFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   entity: StringFieldUpdateOperationsInput
@@ -2955,6 +2988,16 @@ input ProjectUpdateManyWithoutUserNestedInput {
   upsert: [ProjectUpsertWithWhereUniqueWithoutUserInput!]
 }
 
+input ProjectUpdateOneWithoutAwardsNestedInput {
+  connect: ProjectWhereUniqueInput
+  connectOrCreate: ProjectCreateOrConnectWithoutAwardsInput
+  create: ProjectCreateWithoutAwardsInput
+  delete: Boolean
+  disconnect: Boolean
+  update: ProjectUpdateWithoutAwardsInput
+  upsert: ProjectUpsertWithoutAwardsInput
+}
+
 input ProjectUpdateOneWithoutNestedLevel1NestedInput {
   connect: ProjectWhereUniqueInput
   connectOrCreate: ProjectCreateOrConnectWithoutNestedLevel1Input
@@ -2970,7 +3013,23 @@ input ProjectUpdateWithWhereUniqueWithoutUserInput {
   where: ProjectWhereUniqueInput!
 }
 
+input ProjectUpdateWithoutAwardsInput {
+  description: StringFieldUpdateOperationsInput
+  endDate: DateTimeFieldUpdateOperationsInput
+  entity: StringFieldUpdateOperationsInput
+  highlights: ProjectUpdatehighlightsInput
+  keywords: ProjectUpdatekeywordsInput
+  name: StringFieldUpdateOperationsInput
+  nestedLevel1: NestedProjectLevel1UpdateManyWithoutProjectNestedInput
+  roles: ProjectUpdaterolesInput
+  startDate: DateTimeFieldUpdateOperationsInput
+  type: StringFieldUpdateOperationsInput
+  url: StringFieldUpdateOperationsInput
+  user: UserUpdateOneWithoutProjectsNestedInput
+}
+
 input ProjectUpdateWithoutNestedLevel1Input {
+  awards: AwardUpdateManyWithoutProjectNestedInput
   description: StringFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   entity: StringFieldUpdateOperationsInput
@@ -2985,6 +3044,7 @@ input ProjectUpdateWithoutNestedLevel1Input {
 }
 
 input ProjectUpdateWithoutUserInput {
+  awards: AwardUpdateManyWithoutProjectNestedInput
   description: StringFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   entity: StringFieldUpdateOperationsInput
@@ -3019,6 +3079,11 @@ input ProjectUpsertWithWhereUniqueWithoutUserInput {
   where: ProjectWhereUniqueInput!
 }
 
+input ProjectUpsertWithoutAwardsInput {
+  create: ProjectCreateWithoutAwardsInput!
+  update: ProjectUpdateWithoutAwardsInput!
+}
+
 input ProjectUpsertWithoutNestedLevel1Input {
   create: ProjectCreateWithoutNestedLevel1Input!
   update: ProjectUpdateWithoutNestedLevel1Input!
@@ -3028,6 +3093,7 @@ input ProjectWhereInput {
   AND: [ProjectWhereInput!]
   NOT: [ProjectWhereInput!]
   OR: [ProjectWhereInput!]
+  awards: AwardListRelationFilter
   description: StringFilter
   endDate: DateTimeFilter
   entity: StringFilter
@@ -3998,7 +4064,6 @@ input StringWithAggregatesFilter {
 
 type User {
   _count: UserCount
-  awards(cursor: AwardWhereUniqueInput, distinct: [AwardScalarFieldEnum!], orderBy: [AwardOrderByWithRelationInput!], skip: Int, take: Int, where: AwardWhereInput): [Award!]!
   education(cursor: EducationWhereUniqueInput, distinct: [EducationScalarFieldEnum!], orderBy: [EducationOrderByWithRelationInput!], skip: Int, take: Int, where: EducationWhereInput): [Education!]!
   email: String!
   firstName: String!
@@ -4029,7 +4094,6 @@ input UserAvgOrderByAggregateInput {
 }
 
 type UserCount {
-  awards: Int!
   education: Int!
   interests: Int!
   languages: Int!
@@ -4066,7 +4130,6 @@ input UserCountOrderByAggregateInput {
 }
 
 input UserCreateInput {
-  awards: AwardCreateNestedManyWithoutUserInput
   education: EducationCreateNestedManyWithoutUserInput
   email: String!
   firstName: String!
@@ -4096,12 +4159,6 @@ input UserCreateManyInput {
   lastName: String!
   phone: String!
   summary: String!
-}
-
-input UserCreateNestedOneWithoutAwardsInput {
-  connect: UserWhereUniqueInput
-  connectOrCreate: UserCreateOrConnectWithoutAwardsInput
-  create: UserCreateWithoutAwardsInput
 }
 
 input UserCreateNestedOneWithoutEducationInput {
@@ -4170,11 +4227,6 @@ input UserCreateNestedOneWithoutWorkInput {
   create: UserCreateWithoutWorkInput
 }
 
-input UserCreateOrConnectWithoutAwardsInput {
-  create: UserCreateWithoutAwardsInput!
-  where: UserWhereUniqueInput!
-}
-
 input UserCreateOrConnectWithoutEducationInput {
   create: UserCreateWithoutEducationInput!
   where: UserWhereUniqueInput!
@@ -4230,29 +4282,7 @@ input UserCreateOrConnectWithoutWorkInput {
   where: UserWhereUniqueInput!
 }
 
-input UserCreateWithoutAwardsInput {
-  education: EducationCreateNestedManyWithoutUserInput
-  email: String!
-  firstName: String!
-  image: String!
-  interests: InterestCreateNestedManyWithoutUserInput
-  label: String!
-  languages: LanguageCreateNestedManyWithoutUserInput
-  lastName: String!
-  location: LocationCreateNestedOneWithoutUserInput
-  phone: String!
-  profiles: ProfileCreateNestedManyWithoutUserInput
-  projects: ProjectCreateNestedManyWithoutUserInput
-  publications: PublicationCreateNestedManyWithoutUserInput
-  references: ReferenceCreateNestedManyWithoutUserInput
-  skills: SkillCreateNestedManyWithoutUserInput
-  summary: String!
-  volunteer: VolunteerCreateNestedManyWithoutUserInput
-  work: WorkCreateNestedManyWithoutUserInput
-}
-
 input UserCreateWithoutEducationInput {
-  awards: AwardCreateNestedManyWithoutUserInput
   email: String!
   firstName: String!
   image: String!
@@ -4273,7 +4303,6 @@ input UserCreateWithoutEducationInput {
 }
 
 input UserCreateWithoutInterestsInput {
-  awards: AwardCreateNestedManyWithoutUserInput
   education: EducationCreateNestedManyWithoutUserInput
   email: String!
   firstName: String!
@@ -4294,7 +4323,6 @@ input UserCreateWithoutInterestsInput {
 }
 
 input UserCreateWithoutLanguagesInput {
-  awards: AwardCreateNestedManyWithoutUserInput
   education: EducationCreateNestedManyWithoutUserInput
   email: String!
   firstName: String!
@@ -4315,7 +4343,6 @@ input UserCreateWithoutLanguagesInput {
 }
 
 input UserCreateWithoutLocationInput {
-  awards: AwardCreateNestedManyWithoutUserInput
   education: EducationCreateNestedManyWithoutUserInput
   email: String!
   firstName: String!
@@ -4336,7 +4363,6 @@ input UserCreateWithoutLocationInput {
 }
 
 input UserCreateWithoutProfilesInput {
-  awards: AwardCreateNestedManyWithoutUserInput
   education: EducationCreateNestedManyWithoutUserInput
   email: String!
   firstName: String!
@@ -4357,7 +4383,6 @@ input UserCreateWithoutProfilesInput {
 }
 
 input UserCreateWithoutProjectsInput {
-  awards: AwardCreateNestedManyWithoutUserInput
   education: EducationCreateNestedManyWithoutUserInput
   email: String!
   firstName: String!
@@ -4378,7 +4403,6 @@ input UserCreateWithoutProjectsInput {
 }
 
 input UserCreateWithoutPublicationsInput {
-  awards: AwardCreateNestedManyWithoutUserInput
   education: EducationCreateNestedManyWithoutUserInput
   email: String!
   firstName: String!
@@ -4399,7 +4423,6 @@ input UserCreateWithoutPublicationsInput {
 }
 
 input UserCreateWithoutReferencesInput {
-  awards: AwardCreateNestedManyWithoutUserInput
   education: EducationCreateNestedManyWithoutUserInput
   email: String!
   firstName: String!
@@ -4420,7 +4443,6 @@ input UserCreateWithoutReferencesInput {
 }
 
 input UserCreateWithoutSkillsInput {
-  awards: AwardCreateNestedManyWithoutUserInput
   education: EducationCreateNestedManyWithoutUserInput
   email: String!
   firstName: String!
@@ -4441,7 +4463,6 @@ input UserCreateWithoutSkillsInput {
 }
 
 input UserCreateWithoutVolunteerInput {
-  awards: AwardCreateNestedManyWithoutUserInput
   education: EducationCreateNestedManyWithoutUserInput
   email: String!
   firstName: String!
@@ -4462,7 +4483,6 @@ input UserCreateWithoutVolunteerInput {
 }
 
 input UserCreateWithoutWorkInput {
-  awards: AwardCreateNestedManyWithoutUserInput
   education: EducationCreateNestedManyWithoutUserInput
   email: String!
   firstName: String!
@@ -4559,7 +4579,6 @@ input UserOrderByWithAggregationInput {
 }
 
 input UserOrderByWithRelationInput {
-  awards: AwardOrderByRelationAggregateInput
   education: EducationOrderByRelationAggregateInput
   email: SortOrder
   firstName: SortOrder
@@ -4620,7 +4639,6 @@ input UserSumOrderByAggregateInput {
 }
 
 input UserUpdateInput {
-  awards: AwardUpdateManyWithoutUserNestedInput
   education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
@@ -4649,16 +4667,6 @@ input UserUpdateManyMutationInput {
   lastName: StringFieldUpdateOperationsInput
   phone: StringFieldUpdateOperationsInput
   summary: StringFieldUpdateOperationsInput
-}
-
-input UserUpdateOneWithoutAwardsNestedInput {
-  connect: UserWhereUniqueInput
-  connectOrCreate: UserCreateOrConnectWithoutAwardsInput
-  create: UserCreateWithoutAwardsInput
-  delete: Boolean
-  disconnect: Boolean
-  update: UserUpdateWithoutAwardsInput
-  upsert: UserUpsertWithoutAwardsInput
 }
 
 input UserUpdateOneWithoutEducationNestedInput {
@@ -4771,29 +4779,7 @@ input UserUpdateOneWithoutWorkNestedInput {
   upsert: UserUpsertWithoutWorkInput
 }
 
-input UserUpdateWithoutAwardsInput {
-  education: EducationUpdateManyWithoutUserNestedInput
-  email: StringFieldUpdateOperationsInput
-  firstName: StringFieldUpdateOperationsInput
-  image: StringFieldUpdateOperationsInput
-  interests: InterestUpdateManyWithoutUserNestedInput
-  label: StringFieldUpdateOperationsInput
-  languages: LanguageUpdateManyWithoutUserNestedInput
-  lastName: StringFieldUpdateOperationsInput
-  location: LocationUpdateOneWithoutUserNestedInput
-  phone: StringFieldUpdateOperationsInput
-  profiles: ProfileUpdateManyWithoutUserNestedInput
-  projects: ProjectUpdateManyWithoutUserNestedInput
-  publications: PublicationUpdateManyWithoutUserNestedInput
-  references: ReferenceUpdateManyWithoutUserNestedInput
-  skills: SkillUpdateManyWithoutUserNestedInput
-  summary: StringFieldUpdateOperationsInput
-  volunteer: VolunteerUpdateManyWithoutUserNestedInput
-  work: WorkUpdateManyWithoutUserNestedInput
-}
-
 input UserUpdateWithoutEducationInput {
-  awards: AwardUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   image: StringFieldUpdateOperationsInput
@@ -4814,7 +4800,6 @@ input UserUpdateWithoutEducationInput {
 }
 
 input UserUpdateWithoutInterestsInput {
-  awards: AwardUpdateManyWithoutUserNestedInput
   education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
@@ -4835,7 +4820,6 @@ input UserUpdateWithoutInterestsInput {
 }
 
 input UserUpdateWithoutLanguagesInput {
-  awards: AwardUpdateManyWithoutUserNestedInput
   education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
@@ -4856,7 +4840,6 @@ input UserUpdateWithoutLanguagesInput {
 }
 
 input UserUpdateWithoutLocationInput {
-  awards: AwardUpdateManyWithoutUserNestedInput
   education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
@@ -4877,7 +4860,6 @@ input UserUpdateWithoutLocationInput {
 }
 
 input UserUpdateWithoutProfilesInput {
-  awards: AwardUpdateManyWithoutUserNestedInput
   education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
@@ -4898,7 +4880,6 @@ input UserUpdateWithoutProfilesInput {
 }
 
 input UserUpdateWithoutProjectsInput {
-  awards: AwardUpdateManyWithoutUserNestedInput
   education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
@@ -4919,7 +4900,6 @@ input UserUpdateWithoutProjectsInput {
 }
 
 input UserUpdateWithoutPublicationsInput {
-  awards: AwardUpdateManyWithoutUserNestedInput
   education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
@@ -4940,7 +4920,6 @@ input UserUpdateWithoutPublicationsInput {
 }
 
 input UserUpdateWithoutReferencesInput {
-  awards: AwardUpdateManyWithoutUserNestedInput
   education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
@@ -4961,7 +4940,6 @@ input UserUpdateWithoutReferencesInput {
 }
 
 input UserUpdateWithoutSkillsInput {
-  awards: AwardUpdateManyWithoutUserNestedInput
   education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
@@ -4982,7 +4960,6 @@ input UserUpdateWithoutSkillsInput {
 }
 
 input UserUpdateWithoutVolunteerInput {
-  awards: AwardUpdateManyWithoutUserNestedInput
   education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
@@ -5003,7 +4980,6 @@ input UserUpdateWithoutVolunteerInput {
 }
 
 input UserUpdateWithoutWorkInput {
-  awards: AwardUpdateManyWithoutUserNestedInput
   education: EducationUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
@@ -5021,11 +4997,6 @@ input UserUpdateWithoutWorkInput {
   skills: SkillUpdateManyWithoutUserNestedInput
   summary: StringFieldUpdateOperationsInput
   volunteer: VolunteerUpdateManyWithoutUserNestedInput
-}
-
-input UserUpsertWithoutAwardsInput {
-  create: UserCreateWithoutAwardsInput!
-  update: UserUpdateWithoutAwardsInput!
 }
 
 input UserUpsertWithoutEducationInput {
@@ -5087,7 +5058,6 @@ input UserWhereInput {
   AND: [UserWhereInput!]
   NOT: [UserWhereInput!]
   OR: [UserWhereInput!]
-  awards: AwardListRelationFilter
   education: EducationListRelationFilter
   email: StringFilter
   firstName: StringFilter
