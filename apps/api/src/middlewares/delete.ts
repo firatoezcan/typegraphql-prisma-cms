@@ -65,8 +65,8 @@ export const createDeleteManyMiddleware = (model: Prisma.ModelName) => {
   return DeleteManyMiddleware;
 };
 
-export const createDeleteSingleMiddleware = (model: Prisma.ModelName) => {
-  const DeleteSingleMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
+export const createDeleteOneMiddleware = (model: Prisma.ModelName) => {
+  const DeleteOneMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
     const { context, args } = resolverData;
 
     const userAbility = await createUserReadAbility(context);
@@ -101,6 +101,6 @@ export const createDeleteSingleMiddleware = (model: Prisma.ModelName) => {
       }
     );
   };
-  Object.defineProperty(DeleteSingleMiddleware, "name", { value: `DeleteSingle${model}Middleware` });
-  return DeleteSingleMiddleware;
+  Object.defineProperty(DeleteOneMiddleware, "name", { value: `DeleteOne${model}Middleware` });
+  return DeleteOneMiddleware;
 };

@@ -13,11 +13,11 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { ApolloServer } from "apollo-server";
 import path from "path";
 import { buildSchema, UseMiddleware } from "type-graphql";
-import { createCreateManyMiddleware, createCreateSingleMiddleware } from "./middlewares/create";
-import { createFindManyMiddleware, createFindSingleMiddleware } from "./middlewares/find";
+import { createCreateManyMiddleware, createCreateOneMiddleware } from "./middlewares/create";
+import { createFindManyMiddleware, createFindOneMiddleware } from "./middlewares/find";
 import { LogTimeMiddleware } from "./middlewares/log-time";
-import { createUpdateManyMiddleware, createUpdateSingleMiddleware } from "./middlewares/update";
-import { createDeleteSingleMiddleware, createDeleteManyMiddleware } from "./middlewares/delete";
+import { createUpdateManyMiddleware, createUpdateOneMiddleware } from "./middlewares/update";
+import { createDeleteOneMiddleware, createDeleteManyMiddleware } from "./middlewares/delete";
 import { GraphQLError } from "graphql";
 
 export interface Context {
@@ -35,11 +35,11 @@ const createManyReadMiddlewares = <TModel extends Prisma.ModelName>(model: TMode
     [`deleteMany${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
     [`findFirst${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
     [`${lowerCaseFirstLetter(model)}s`]: [UseMiddleware(createFindManyMiddleware(model))],
-    [`${lowerCaseFirstLetter(model)}`]: [UseMiddleware(createFindSingleMiddleware(model))],
+    [`${lowerCaseFirstLetter(model)}`]: [UseMiddleware(createFindOneMiddleware(model))],
     [`groupBy${model}`]: [UseMiddleware(createFindManyMiddleware(model))],
-    [`updateOne${model}`]: [UseMiddleware(createUpdateSingleMiddleware(model))],
+    [`updateOne${model}`]: [UseMiddleware(createUpdateOneMiddleware(model))],
     [`updateMany${model}`]: [UseMiddleware(createUpdateManyMiddleware(model))],
-    [`deleteOne${model}`]: [UseMiddleware(createDeleteSingleMiddleware(model))],
+    [`deleteOne${model}`]: [UseMiddleware(createDeleteOneMiddleware(model))],
     [`deleteMany${model}`]: [UseMiddleware(createDeleteManyMiddleware(model))],
   } as unknown as ResolverActionsConfig<TModel>;
 };
@@ -49,7 +49,7 @@ for (const model of Object.values(Prisma.ModelName)) {
   resolversEnhanceMap[model] = {
     _all: [UseMiddleware(LogTimeMiddleware)],
     ...createManyReadMiddlewares(model),
-    [`createOne${model}`]: [UseMiddleware(createCreateSingleMiddleware(model))],
+    [`createOne${model}`]: [UseMiddleware(createCreateOneMiddleware(model))],
     [`createMany${model}`]: [UseMiddleware(createCreateManyMiddleware(model))],
   };
 }
@@ -61,7 +61,7 @@ for (const model of Prisma.dmmf.datamodel.models) {
     if (!relationResolversEnhanceMap[model.name]) {
       relationResolversEnhanceMap[model.name] = {};
     }
-    const findMiddleware = field.isList ? createFindManyMiddleware : createFindSingleMiddleware;
+    const findMiddleware = field.isList ? createFindManyMiddleware : createFindOneMiddleware;
     relationResolversEnhanceMap[model.name][field.name] = [
       UseMiddleware(LogTimeMiddleware, findMiddleware(field.type as Prisma.ModelName)),
     ];

@@ -67,8 +67,8 @@ export const createCreateManyMiddleware = (model: Prisma.ModelName) => {
   return CreateManyMiddleware;
 };
 
-export const createCreateSingleMiddleware = (model: Prisma.ModelName) => {
-  const CreateSingleMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
+export const createCreateOneMiddleware = (model: Prisma.ModelName) => {
+  const CreateOneMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
     const { context, args } = resolverData;
 
     const userAbility = await createUserReadAbility(context);
@@ -99,6 +99,6 @@ export const createCreateSingleMiddleware = (model: Prisma.ModelName) => {
       }
     );
   };
-  Object.defineProperty(CreateSingleMiddleware, "name", { value: `CreateSingle${model}Middleware` });
-  return CreateSingleMiddleware;
+  Object.defineProperty(CreateOneMiddleware, "name", { value: `CreateOne${model}Middleware` });
+  return CreateOneMiddleware;
 };

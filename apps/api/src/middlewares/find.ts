@@ -25,8 +25,8 @@ export const createFindManyMiddleware = (model: Prisma.ModelName) => {
   return FindManyMiddleware;
 };
 
-export const createFindSingleMiddleware = (model: Prisma.ModelName) => {
-  const FindSingleMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
+export const createFindOneMiddleware = (model: Prisma.ModelName) => {
+  const FindOneMiddleware = async (resolverData: ResolverData<Context>, next: NextFn) => {
     const { context, args } = resolverData;
 
     const userAbility = await createUserReadAbility(context);
@@ -49,6 +49,6 @@ export const createFindSingleMiddleware = (model: Prisma.ModelName) => {
 
     return result;
   };
-  Object.defineProperty(FindSingleMiddleware, "name", { value: `FindSingle${model}Middleware` });
-  return FindSingleMiddleware;
+  Object.defineProperty(FindOneMiddleware, "name", { value: `FindOne${model}Middleware` });
+  return FindOneMiddleware;
 };
