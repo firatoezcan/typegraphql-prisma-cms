@@ -74,5 +74,9 @@ export const createSingleInclude = (
 };
 
 export const createInclude = (rules: ReturnType<AppAbility["possibleRulesFor"]>, relation: string) => {
-  return _.defaultsDeep({}, ...rules.map((rule) => createSingleInclude(rule.conditions, relation)).filter(Boolean));
+  const mergedInclude = _.defaultsDeep(
+    {},
+    ...rules.map((rule) => createSingleInclude(rule.conditions, relation)).filter(Boolean)
+  );
+  return Object.keys(mergedInclude).length > 0 ? mergedInclude : undefined;
 };
