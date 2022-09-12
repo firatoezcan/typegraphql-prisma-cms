@@ -19,6 +19,7 @@ import { LogTimeMiddleware } from "./middlewares/log-time";
 import { createUpdateManyMiddleware, createUpdateOneMiddleware } from "./middlewares/update";
 import { createDeleteOneMiddleware, createDeleteManyMiddleware } from "./middlewares/delete";
 import { GraphQLError } from "graphql";
+import { createSchema, runQuery } from "./utils/createSchema";
 
 export interface Context {
   prisma: PrismaClient;
@@ -73,16 +74,18 @@ applyResolversEnhanceMap(resolversEnhanceMap);
 applyRelationResolversEnhanceMap(relationResolversEnhanceMap);
 
 async function main() {
-  const schema = await buildSchema({
-    resolvers,
-    emitSchemaFile: path.resolve(__dirname, "../schema.graphql"),
-    validate: false,
-  });
-
+  // const schema = await buildSchema({
+  //   resolvers,
+  //   emitSchemaFile: path.resolve(__dirname, "../schema.graphql"),
+  //   validate: false,
+  // });
   const prisma = new PrismaClient({});
 
   await prisma.$connect();
 
+  // const res = await runQuery({ EmployeeId: 2, prisma });
+  // debugger;
+  const schema = createSchema();
   const server = new ApolloServer({
     schema,
     context: ({ req }): Context => {

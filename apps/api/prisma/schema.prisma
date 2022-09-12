@@ -1,12 +1,16 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["interactiveTransactions"]
+  provider = "prisma-client-js"
+  // previewFeatures = ["interactiveTransactions"]
 }
 
-generator typegraphql {
-  provider = "typegraphql-prisma"
-  output   = "../node_modules/.prisma/type-graphql"
+generator nexusPrisma {
+  provider = "nexus-prisma"
 }
+
+// generator typegraphql {
+//   provider = "typegraphql-prisma"
+//   output   = "../node_modules/.prisma/type-graphql"
+// }
 
 datasource db {
   provider = "postgresql"
@@ -49,6 +53,7 @@ model Customer {
   @@index([SupportRepId], map: "IFK_CustomerSupportRepId")
 }
 
+/// Employees Table
 model Employee {
   EmployeeId     Int        @id(map: "PK_Employee") @unique
   LastName       String     @db.VarChar(20)
