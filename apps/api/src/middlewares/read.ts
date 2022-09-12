@@ -109,7 +109,7 @@ export const createFindManyMiddleware = (model: Prisma.ModelName) => {
       });
     };
 
-    if (userAbility.can("read", model)) return next();
+    // if (userAbility.can("read", model)) return next();
 
     const userWhere = accessibleBy(userAbility, "read")[model];
 
