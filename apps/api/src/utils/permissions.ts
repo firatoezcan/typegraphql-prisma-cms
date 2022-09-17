@@ -61,6 +61,7 @@ export const createUserReadAbility = async (context: Context) => {
     can("read", "Invoice", { Customer: { is: { SupportRepId: { equals: EmployeeId } } } });
     can("read", "InvoiceLine", { Invoice: { is: { Customer: { is: { SupportRepId: { equals: EmployeeId } } } } } });
     can("read", "Employee", { ReportsTo: { equals: EmployeeId } });
+    can("read", "Employee", { EmployeeId: { equals: EmployeeId } });
     can("read", "Customer", { Employee: { is: { ReportsTo: { equals: EmployeeId } } } });
     can("read", "Invoice", { Customer: { is: { Employee: { is: { ReportsTo: { equals: EmployeeId } } } } } });
     can("read", "InvoiceLine", {
