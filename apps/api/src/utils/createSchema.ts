@@ -1,13 +1,16 @@
 import { accessibleBy } from "@casl/prisma";
-import { prisma, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { DMMF } from "@prisma/client/runtime";
-import { extendType, list, makeSchema, mutationType, nullable, objectType, queryType } from "nexus";
+import graphqlFields from "graphql-fields";
+import { defaultsDeep } from "lodash";
+import { extendType, list, makeSchema, nullable, objectType } from "nexus";
 // eslint-disable-next-line import/no-unresolved
 import * as Models from "nexus-prisma";
 // eslint-disable-next-line import/no-unresolved
 import NexusPrismaScalars from "nexus-prisma/scalars";
 import { Context } from "..";
 import { createUserReadAbility } from "./permissions";
+import { getRelations } from "./prisma";
 
 export type DocumentableNode = DMMF.Model | DMMF.Field | DMMF.DatamodelEnum;
 
@@ -21,36 +24,6 @@ export const isField = (node: DocumentableNode): node is DMMF.Field => {
 
 export const isEnum = (node: DocumentableNode): node is DMMF.DatamodelEnum => {
   return "values" in node;
-};
-
-export const runQuery = async (ctx: Context) => {
-  const userAbility = await createUserReadAbility(ctx);
-
-  return ctx.prisma.Employee.findMany({
-    where: accessibleBy(userAbility, "read").Employee,
-    include: {
-      Customer: {
-        where: accessibleBy(userAbility, "read").Customer,
-        include: {
-          Invoice: {
-            where: accessibleBy(userAbility, "read").Invoice,
-            include: {
-              InvoiceLine: {
-                where: accessibleBy(userAbility, "read").InvoiceLine,
-                include: {
-                  Track: {
-                    include: {
-                      Album: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
 };
 
 const prismaFunctions = [
@@ -110,7 +83,10 @@ export const createSchema = () => {
       description: model.documentation,
       definition(t) {
         model.fields.forEach((field) => {
-          t.field(Models[model.name][field.name]);
+          t.field({
+            ...Models[model.name][field.name],
+            resolve: undefined,
+          });
         });
       },
     });
@@ -122,7 +98,7 @@ export const createSchema = () => {
         t.field({
           name: lowerCaseFirstLetter(model.name),
           type: nullable(model.name),
-          resolve(_, __, ctx) {
+          resolve(source, args, ctx: Context, info) {
             debugger;
             return ctx.prisma[model.name].findUnique();
           },
@@ -135,12 +111,37 @@ export const createSchema = () => {
         t.field({
           name: lowerCaseFirstLetter(model.name) + "s",
           type: list(model.name),
-          resolve(_, __, ctx) {
-            if (model.name === "Employee") {
-              return runQuery(ctx);
-            }
-            debugger;
-            return ctx.prisma[model.name].findMany();
+          async resolve(source, args, ctx: Context, info) {
+            const createSelect = (obj: Record<string, any>, fromModel: string) => {
+              const relations = getRelations(fromModel);
+              const sel = Object.entries(obj).map(([key, value]) => {
+                if (Object.keys(value).length === 0) {
+                  return { [key]: true };
+                }
+                const field = relations.find((field) => field.name === key);
+                if (!field) {
+                  // If this is a json f.e.
+                  return { [key]: true };
+                }
+                return { [key]: createSelect(value, key) };
+              });
+              const where = accessibleBy(userAbility, "read")[fromModel];
+
+              return {
+                where: Object.keys(where).length > 0 ? where : undefined,
+                select: defaultsDeep(
+                  // @ts-expect-error
+                  ...sel
+                ),
+              };
+            };
+            const userAbility = await createUserReadAbility(ctx);
+            const gqlFields = graphqlFields(info, {}, { processArguments: true });
+            const prismaArgs = createSelect(gqlFields, model.name);
+            console.time("Querying");
+            const res = await ctx.prisma[model.name].findMany(prismaArgs);
+            console.timeEnd("Querying");
+            return res;
           },
         });
       },
@@ -156,7 +157,7 @@ export const createSchema = () => {
           t.field({
             name: resolverName,
             type: returnType,
-            resolve(_, __, ctx) {
+            resolve(source, args, ctx: Context, info) {
               debugger;
               return ctx.prisma[model.name][prismaFn]();
             },
