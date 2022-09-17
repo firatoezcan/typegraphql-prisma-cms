@@ -2,13 +2,24 @@ import { accessibleBy } from "@casl/prisma";
 import { Prisma } from "@prisma/client";
 import { DMMF } from "@prisma/client/runtime";
 import graphqlFields from "graphql-fields";
-import { defaultsDeep } from "lodash";
-import { extendType, list, makeSchema, nullable, objectType } from "nexus";
-// eslint-disable-next-line import/no-unresolved
+import { lowerFirst } from "lodash";
+import { extendType, inputObjectType, list, makeSchema, nonNull, nullable, objectType } from "nexus";
 import * as Models from "nexus-prisma";
 // eslint-disable-next-line import/no-unresolved
 import NexusPrismaScalars from "nexus-prisma/scalars";
 import { Context } from "..";
+import { combineWhere, createPrismaArgs } from "./args";
+import {
+  createListRelationFilter,
+  createRelationFilter,
+  DateTimeFilter,
+  IntFilter,
+  ModelWhereMixin,
+  NestedDateTimeFilter,
+  NestedIntFilter,
+  NestedStringFilter,
+  StringFilter,
+} from "./nexus-prisma-types";
 import { createUserReadAbility } from "./permissions";
 import { getRelations } from "./prisma";
 
@@ -49,14 +60,10 @@ const batchPayloadType = objectType({
   name: "BatchPayload",
   definition(t) {
     t.field("count", {
-      type: "Int",
+      type: nonNull("Int"),
     });
   },
 });
-
-function lowerCaseFirstLetter(string: string) {
-  return string.charAt(0).toLowerCase() + string.slice(1);
-}
 
 const getTypeForOperation = (prismaFn: PrismaFunction, name: string) => {
   if (prismaFn === "findMany") {
@@ -77,30 +84,108 @@ const getTypeForOperation = (prismaFn: PrismaFunction, name: string) => {
 export const createSchema = () => {
   const dmmf = Prisma.dmmf;
   const models = dmmf.datamodel.models;
+  const relationFilters: string[] = [];
   const types = models.map((model) => {
+    const relations = getRelations(model.name);
+    const getRelation = (field: Prisma.DMMF.Field) => {
+      if (field.kind === "object") {
+        const relation = relations.find((relation) => relation.name === field.name);
+        if (!relation) {
+          return undefined;
+        }
+        return relation;
+      }
+    };
     const type = objectType({
       name: model.name,
       description: model.documentation,
       definition(t) {
         model.fields.forEach((field) => {
+          const relation = getRelation(field);
           t.field({
             ...Models[model.name][field.name],
+            args: relation ? { where: `${relation.type}WhereInput` } : undefined,
             resolve: undefined,
           });
         });
       },
     });
+
+    const relationTypes = model.fields
+      .map((field) => {
+        if (field.kind === "object") {
+          const relation = relations.find((relation) => relation.name === field.name);
+          if (!relation) {
+            return undefined;
+          }
+          if (field.isList) {
+            const listRelationType = `${field.type}ListRelationFilter`;
+            if (!relationFilters.includes(listRelationType)) {
+              relationFilters.push(listRelationType);
+              return createListRelationFilter(field.type);
+            }
+          }
+          const singleRelationType = `${field.type}RelationFilter`;
+          if (!relationFilters.includes(singleRelationType)) {
+            relationFilters.push(singleRelationType);
+            return createRelationFilter(field.type);
+          }
+        }
+      })
+      .filter(Boolean);
+
+    const whereInput = inputObjectType({
+      name: `${model.name}WhereInput`,
+      definition(t) {
+        ModelWhereMixin(t, model.name);
+
+        model.fields.forEach((field) => {
+          if (field.kind === "scalar") {
+            if (field.type === "Decimal") {
+              t.field({ name: field.name, type: `IntFilter` });
+              return;
+            }
+            t.field({ name: field.name, type: `${field.type}Filter` });
+            return;
+          }
+          if (field.kind === "object") {
+            const relation = relations.find((relation) => relation.name === field.name);
+            if (!relation) {
+              t.field({ name: field.name, type: `Json` });
+              return;
+            }
+            if (field.isList) {
+              t.field({ name: field.name, type: `${field.type}ListRelationFilter` });
+              return;
+            }
+
+            t.field({ name: field.name, type: `${field.type}RelationFilter` });
+          }
+        });
+      },
+    });
+
+    console.log(whereInput.name);
     const operations = dmmf.mappings.modelOperations.find((m) => m.model === model.name);
     if (!operations) return type;
     const singleQueryType = extendType({
       type: "Query",
       definition(t) {
         t.field({
-          name: lowerCaseFirstLetter(model.name),
+          name: lowerFirst(model.name),
           type: nullable(model.name),
-          resolve(source, args, ctx: Context, info) {
-            debugger;
-            return ctx.prisma[model.name].findUnique();
+          async resolve(source, args, ctx: Context, info) {
+            const userAbility = await createUserReadAbility(ctx);
+            const gqlFields = graphqlFields(info, {}, { processArguments: true });
+            const prismaArgs = createPrismaArgs(userAbility, gqlFields, model.name);
+            const userWhere = accessibleBy(userAbility, "read")[model.name];
+            console.time("Querying");
+            const res = await ctx.prisma[model.name].findFirst({
+              ...prismaArgs,
+              where: combineWhere(userWhere, args.where),
+            });
+            console.timeEnd("Querying");
+            return res;
           },
         });
       },
@@ -109,37 +194,19 @@ export const createSchema = () => {
       type: "Query",
       definition(t) {
         t.field({
-          name: lowerCaseFirstLetter(model.name) + "s",
+          name: lowerFirst(model.name) + "s",
           type: list(model.name),
+          args: { where: `${model.name}WhereInput` },
           async resolve(source, args, ctx: Context, info) {
-            const createSelect = (obj: Record<string, any>, fromModel: string) => {
-              const relations = getRelations(fromModel);
-              const sel = Object.entries(obj).map(([key, value]) => {
-                if (Object.keys(value).length === 0) {
-                  return { [key]: true };
-                }
-                const field = relations.find((field) => field.name === key);
-                if (!field) {
-                  // If this is a json f.e.
-                  return { [key]: true };
-                }
-                return { [key]: createSelect(value, key) };
-              });
-              const where = accessibleBy(userAbility, "read")[fromModel];
-
-              return {
-                where: Object.keys(where).length > 0 ? where : undefined,
-                select: defaultsDeep(
-                  // @ts-expect-error
-                  ...sel
-                ),
-              };
-            };
             const userAbility = await createUserReadAbility(ctx);
             const gqlFields = graphqlFields(info, {}, { processArguments: true });
-            const prismaArgs = createSelect(gqlFields, model.name);
+            const prismaArgs = createPrismaArgs(userAbility, gqlFields, model.name);
+            const userWhere = accessibleBy(userAbility, "read")[model.name];
             console.time("Querying");
-            const res = await ctx.prisma[model.name].findMany(prismaArgs);
+            const res = await ctx.prisma[model.name].findMany({
+              ...prismaArgs,
+              where: combineWhere(userWhere, args.where),
+            });
             console.timeEnd("Querying");
             return res;
           },
@@ -165,10 +232,20 @@ export const createSchema = () => {
         },
       });
     });
-    return [type, singleQueryType, manyQueryType, ...rootOperations].filter(Boolean);
+    return [type, whereInput, ...relationTypes, singleQueryType, manyQueryType, ...rootOperations].filter(Boolean);
   });
 
   return makeSchema({
-    types: [NexusPrismaScalars, batchPayloadType, ...types.flat(1)],
+    types: [
+      NexusPrismaScalars,
+      batchPayloadType,
+      NestedIntFilter,
+      NestedStringFilter,
+      IntFilter,
+      StringFilter,
+      NestedDateTimeFilter,
+      DateTimeFilter,
+      ...types.flat(1),
+    ],
   });
 };
