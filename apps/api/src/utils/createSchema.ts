@@ -21,7 +21,7 @@ import {
   StringFilter,
 } from "./nexus-prisma-types";
 import { createUserReadAbility } from "./permissions";
-import { getRelations } from "./prisma";
+import { getRelations, isPrismaFn, PrismaFunction } from "./prisma";
 
 export type DocumentableNode = DMMF.Model | DMMF.Field | DMMF.DatamodelEnum;
 
@@ -36,25 +36,6 @@ export const isField = (node: DocumentableNode): node is DMMF.Field => {
 export const isEnum = (node: DocumentableNode): node is DMMF.DatamodelEnum => {
   return "values" in node;
 };
-
-const prismaFunctions = [
-  "findMany",
-  "create",
-  "delete",
-  "update",
-  "findUnique",
-  "findFirst",
-  "createMany",
-  "deleteMany",
-  "updateMany",
-  "upsert",
-  "aggregate",
-  "groupBy",
-] as const;
-
-type PrismaFunction = typeof prismaFunctions[number];
-
-const isPrismaFn = (fn: string): fn is PrismaFunction => prismaFunctions.includes(fn as any);
 
 const batchPayloadType = objectType({
   name: "BatchPayload",
@@ -96,6 +77,8 @@ export const createSchema = () => {
         return relation;
       }
     };
+
+    // Base Type for Model
     const type = objectType({
       name: model.name,
       description: model.documentation,
@@ -111,6 +94,7 @@ export const createSchema = () => {
       },
     });
 
+    // Types for Relation Filters (only created once)
     const relationTypes = model.fields
       .map((field) => {
         if (field.kind === "object") {
@@ -131,9 +115,11 @@ export const createSchema = () => {
             return createRelationFilter(field.type);
           }
         }
+        return undefined;
       })
       .filter(Boolean);
 
+    // WhereInput Type for filtering
     const whereInput = inputObjectType({
       name: `${model.name}WhereInput`,
       definition(t) {
@@ -165,9 +151,10 @@ export const createSchema = () => {
       },
     });
 
-    console.log(whereInput.name);
     const operations = dmmf.mappings.modelOperations.find((m) => m.model === model.name);
     if (!operations) return type;
+
+    // "user" resolver
     const singleQueryType = extendType({
       type: "Query",
       definition(t) {
@@ -190,6 +177,8 @@ export const createSchema = () => {
         });
       },
     });
+
+    // "users" resolver
     const manyQueryType = extendType({
       type: "Query",
       definition(t) {
@@ -213,6 +202,8 @@ export const createSchema = () => {
         });
       },
     });
+
+    // "findOneUser", "findManyUser", "createUser", etc., resolvers
     const rootOperations = Object.entries(operations).map(([prismaFn, resolverName]) => {
       if (!isPrismaFn(prismaFn)) return undefined;
       const type = getTypeForOperation(prismaFn, model.name);
@@ -232,6 +223,7 @@ export const createSchema = () => {
         },
       });
     });
+
     return [type, whereInput, ...relationTypes, singleQueryType, manyQueryType, ...rootOperations].filter(Boolean);
   });
 

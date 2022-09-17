@@ -13,3 +13,22 @@ export const getUniqueField = (model: string) => {
 export const getRelations = (model: string) => {
   return findModel(model).fields.filter((field) => field.kind === "object" && field.relationName);
 };
+
+const prismaFunctions = [
+  "findMany",
+  "create",
+  "delete",
+  "update",
+  "findUnique",
+  "findFirst",
+  "createMany",
+  "deleteMany",
+  "updateMany",
+  "upsert",
+  "aggregate",
+  "groupBy",
+] as const;
+
+export type PrismaFunction = typeof prismaFunctions[number];
+
+export const isPrismaFn = (fn: string): fn is PrismaFunction => prismaFunctions.includes(fn as any);
