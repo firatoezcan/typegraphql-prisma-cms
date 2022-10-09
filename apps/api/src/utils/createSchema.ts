@@ -87,7 +87,7 @@ export const createSchema = () => {
           const relation = getRelation(field);
           t.field({
             ...Models[model.name][field.name],
-            args: relation ? { where: `${relation.type}WhereInput` } : undefined,
+            args: relation && relation.isList ? { where: `${relation.type}WhereInput` } : undefined,
             resolve: undefined,
           });
         });
