@@ -1,5 +1,5 @@
 import { accessibleBy } from "@casl/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { DMMF } from "@prisma/client/runtime";
 import graphqlFields from "graphql-fields";
 import { lowerFirst } from "lodash";
@@ -192,10 +192,12 @@ export const createSchema = () => {
             const prismaArgs = createPrismaArgs(userAbility, gqlFields, model.name);
             const userWhere = accessibleBy(userAbility, "read")[model.name];
             console.time("Querying");
-            const res = await ctx.prisma[model.name].findMany({
+            const where = combineWhere(userWhere, args.where);
+            const finalArgs = {
               ...prismaArgs,
-              where: combineWhere(userWhere, args.where),
-            });
+              where,
+            };
+            const res = await ctx.prisma[model.name].findMany(finalArgs);
             console.timeEnd("Querying");
             return res;
           },

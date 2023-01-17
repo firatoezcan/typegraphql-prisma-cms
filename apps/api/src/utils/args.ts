@@ -1,4 +1,4 @@
-import { accessibleBy } from "@casl/prisma";
+import { accessibleBy, toPrismaQuery } from "@casl/prisma";
 import { defaultsDeep } from "lodash";
 import { AppAbility } from "./permissions";
 import { getRelations } from "./prisma";
@@ -12,9 +12,10 @@ export const combineWhere = (userWhere: any, graphqlWhere: any) => {
     : userWhere;
 };
 
-export const createPrismaArgs = (ability: AppAbility, obj: Record<string, any>, fromModel: string) => {
+export const createPrismaArgs = (ability: AppAbility, selectedFields: Record<string, any>, fromModel: string) => {
   const relations = getRelations(fromModel);
-  const sel = Object.entries(obj).map(([key, value]) => {
+
+  const sel = Object.entries(selectedFields).map(([key, value]) => {
     if (key.startsWith("__arguments")) {
       return {};
     }
@@ -26,11 +27,15 @@ export const createPrismaArgs = (ability: AppAbility, obj: Record<string, any>, 
       // If this is a json f.e.
       return { [key]: true };
     }
-    return { [key]: createPrismaArgs(ability, value, key) };
+    if (!("isList" in field)) {
+      throw new Error("This should not happen");
+    }
+    const relationArgs = createPrismaArgs(ability, value, key);
+    return { [key]: relationArgs };
   });
   const userWhere = accessibleBy(ability, "read")[fromModel];
 
-  const argsArray = obj.__arguments
+  const argsArray = selectedFields.__arguments
     ?.map((arg) => {
       return Object.keys(arg).map((key) => ({ [key]: arg[key].value }));
     })
