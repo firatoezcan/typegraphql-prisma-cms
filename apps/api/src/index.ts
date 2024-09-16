@@ -15,6 +15,7 @@ async function main() {
 
   await prisma.$connect();
 
+  
   const schema = createSchema();
   const server = new ApolloServer({
     schema,
